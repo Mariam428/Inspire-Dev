@@ -1,0 +1,21 @@
+.app-container {
+    display: flex;
+    gap: 5px;
+    height: 100vh;
+    background-color: #fff;
+    width: 100vw; 
+  }
+  .sidebar{
+    height: 100%;
+  }
+  .content {
+    height: 100%;
+    flex: 1; 
+    padding: 20px 40px;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: auto; /* Enables scrolling if content overflows */
+}
