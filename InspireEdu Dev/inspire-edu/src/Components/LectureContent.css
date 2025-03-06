@@ -1,0 +1,55 @@
+/* Lecture Content Page Styles */
+
+.lecture-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    padding-top: 40px;
+  }
+  
+  .lecture-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .lecture-resources-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .resource-card {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .resource-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .resource-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #444;
+  }
+  

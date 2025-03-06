@@ -1,57 +1,70 @@
 .side-container {
-    width: 250px;
-    height: 100vh;
-    background-color: white;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 30px;
-  }
-  
-  .logo img {
-    width: 40px; /* Adjust size if needed */
-    height: auto; /* Maintain aspect ratio */
-  }
-  
-  .menu {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%; 
-  }
-  
-  
-  .icon-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    width: 100%;
-    cursor: pointer;
-    overflow: visible; 
-  }
-  
-  
-  .icon-container:hover {
-    background: rgba(0, 0, 0, 0.05);
-  }
-  
-  .icon {
-    width: 32px;   /* Increase width for better visibility */
-    height: 32px;  /* Ensure images have a fixed height */
-    object-fit: contain; /* Prevent stretching */
-  }
-  
-  h3 {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
+  width: 250px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo Section */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.logo img {
+  width: 40px;
+  height: auto;
+}
+
+/* Menu Section */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Sidebar Menu Items */
+.menu-item {
+  text-decoration: none;  /* Removes underline */
+  color: #333;            /* Set text color */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 5px;
+}
+
+/* Hover Effect */
+.menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Active Link Styling */
+.menu-item.active {
+  background-color: #007bff;
+  color: white; 
+}
+
+/* Icons inside menu */
+.icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Sidebar Text */
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
