@@ -7,7 +7,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    navigate("/Login.jsx"); 
+    navigate("/Login"); 
   };
 
   return (
