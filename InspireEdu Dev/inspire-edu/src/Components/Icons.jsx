@@ -1,4 +1,5 @@
 import React from "react";
+import "./SideBar.css";
 
 const Icons = ({ path_title, icon_path }) => {
   return (

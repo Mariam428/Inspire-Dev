@@ -30,8 +30,8 @@ const Register = () => {
       <div className="login-card">
         <h2>Register</h2>
         <form onSubmit={handleRegister}>
+        <label>Email:</label>
           <div className="input-group">
-            <label>Email:</label>
             <input 
               type="email" 
               value={email} 
@@ -39,9 +39,8 @@ const Register = () => {
               required 
             />
           </div>
-
+          <label>Password:</label>
           <div className="input-group">
-            <label>Password:</label>
             <input 
               type="password" 
               value={password} 
@@ -49,9 +48,8 @@ const Register = () => {
               required 
             />
           </div>
-
+          <label>Confirm Password:</label>
           <div className="input-group">
-            <label>Confirm Password:</label>
             <input 
               type="password" 
               value={confirmPassword} 
@@ -59,7 +57,6 @@ const Register = () => {
               required 
             />
           </div>
-
           <button type="submit" className="login-btn">Register</button>
         </form>
 

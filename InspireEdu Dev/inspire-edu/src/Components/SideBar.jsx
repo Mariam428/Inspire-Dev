@@ -8,7 +8,8 @@ const sidebarItems = [
   { title: "Classes", icon: "/icons/books_18894128.png", path: "/classes" },
   { title: "Resources", icon: "/icons/notes_4898396.png", path: "/resources" },
   { title: "Study Plan", icon: "/icons/task_2098313.png", path: "/study-plan" },
-  { title: "Settings", icon: "/icons/settings_3524636.png", path: "/settings" },
+  { title: "Chat", icon: "/icons/chat_589708.png", path: "/chat" },
+  { title: "Preformance", icon: "/icons/graph_2815158.png", path: "/Preformance" },
 ];
 
 const SideBar = () => {
