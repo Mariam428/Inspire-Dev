@@ -1,0 +1,83 @@
+/* Main Container */
+.grades-container {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: auto;
+  text-align: center;
+}
+
+/* Title */
+.grades-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+/* Grid Layout */
+.grades-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+  max-width: 800px;
+  margin: auto;
+}
+
+/* Card Styling */
+.grade-card {
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #d1d5db;
+}
+
+/* Hover Effect */
+.grade-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Grade Colors */
+.grade-green {
+  background-color: #e8f4ea; /* Light Green */
+  color: #2E7D32;
+}
+
+.grade-yellow {
+  background-color: #f0ebd5; /* Light Yellow */
+  color: #ddb935;
+}
+
+.grade-red {
+  background-color: #f3e5d7; /* Light Red */
+  color: #B71C1C;
+}
+
+/* Course Name */
+.course-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #374151;
+}
+
+/* Grade */
+.course-grade {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Slogan */
+.course-slogan {
+  font-style: italic;
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}

@@ -1,0 +1,92 @@
+.availability-container {
+  
+    text-align: center;
+    padding: 2rem;
+  
+  }
+ 
+  .availability-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    justify-content: center;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .day-card {
+    width: 150px;  /* Adjust as needed */
+    height: 148px; 
+    background-image: url('/day.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensures the image covers the entire card */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents tiling */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+    color: black; /* Adjust text color for readability */
+    background-size: contain;
+}
+
+  
+  .day-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .day-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    margin-top: 25px; /* Moves the title up */
+}
+
+  
+  .day-card input {
+    width: 50px;
+    padding: 5px;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+  }
+  
+  .submit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #fee2e2; /* Light Red */
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #93c5fd; /* Light Blue */
+  }
+  
+  .submit-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .availability-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+.summary-card {
+ 
+  font-size: 14px;
+  
+}

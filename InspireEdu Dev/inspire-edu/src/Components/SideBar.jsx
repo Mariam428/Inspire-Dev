@@ -7,7 +7,7 @@ const sidebarItems = [
   { title: "Dashboard", icon: "/icons/apartment_13534337.png", path: "/dashboard" },
   { title: "Classes", icon: "/icons/books_18894128.png", path: "/classes" },
   { title: "Resources", icon: "/icons/notes_4898396.png", path: "/resources" },
-  { title: "Study Plan", icon: "/icons/task_2098313.png", path: "/study-plan" },
+  { title: "Study Plan", icon: "/icons/task_2098313.png", path: "/study-plan/weeklyplan" },
   { title: "Chat", icon: "/icons/chat_589708.png", path: "/chat" },
   { title: "Preformance", icon: "/icons/graph_2815158.png", path: "/Preformance" },
 ];

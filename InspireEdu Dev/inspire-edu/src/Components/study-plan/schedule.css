@@ -1,0 +1,68 @@
+/* Ensure full-page scrolling */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* Enable scrolling */
+}
+
+/* Ensure schedule container stretches fully */
+.schedule-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  min-height: 100vh; /* Ensure it covers full viewport */
+}
+
+/* Wrap content inside a scrollable section */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+/* Cards should expand correctly */
+.day-card-sched {
+  background-image: url('/day-sched.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 12px;
+  padding: 15px; /* Reduced padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #4a4a4a;
+  min-height: 150px; /* Adjusted height */
+  max-width: 250px; /* Limited width */
+  width: 80%; /* Responsive width */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: cursive;
+  font-size: small;
+  overflow-y: auto; /* Enables vertical scrollbar if needed */
+  max-height: 300px; /* Adjust as needed */
+  margin: 2px;
+}
+
+
+/* Hover effect */
+.day-card-sched:hover {
+  transform: scale(1.05); 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Prevents textarea from shrinking too much */
+.notes-card textarea {
+  width: 100%;
+  height: 120px; /* Slightly larger for better usability */
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  resize: none;
+}
