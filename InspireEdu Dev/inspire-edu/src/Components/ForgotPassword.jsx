@@ -22,8 +22,8 @@ const ForgotPassword = () => {
       <div className="login-card">
         <h2>Forgot Password</h2>
         <form onSubmit={handleReset}>
+        <label>Email:</label>
           <div className="input-group">
-            <label>Email:</label>
             <input 
               type="email" 
               value={email} 
