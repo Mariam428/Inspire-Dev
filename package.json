@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "lucide-react": "^0.477.0"
+    "lucide-react": "^0.477.0",
+    "react-calendar": "^5.1.0"
   }
 }

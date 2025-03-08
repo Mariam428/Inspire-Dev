@@ -5,6 +5,10 @@ import Login from "./Components/Login";
 import Resources from "./Components/Resources";
 import Lectures from "./Components/Lectures";
 import LectureContent from "./Components/LectureContent"; // Import the new component
+import Setup from "./Components/study-plan/weeklyplan";
+import Grades from "./Components/study-plan/grades";
+import Availability from "./Components/study-plan/availability"
+import Schedule from "./Components/study-plan/schedule"
 
 import "./App.css";
 
@@ -23,9 +27,13 @@ function App() {
             <Route path="/Resources" element={<Resources />} /> {/* Ensure this line is added */}
             <Route path="/lectures/:subjectName" element={<Lectures />} />
             <Route path="/lecture-content/:subjectName/:lectureName" element={<LectureContent />} />
+            <Route path="/study-plan/weeklyplan" element={<Setup />} />
+            <Route path="/study-plan/grades" element={<Grades />} />
+            <Route path="/study-plan/availability" element={<Availability />} />
+            <Route path="/study-plan/schedule" element={<Schedule/>} />
 
 
-
+          
           </Routes>
         </div>
       </div>
