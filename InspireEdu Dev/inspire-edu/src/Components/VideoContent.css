@@ -1,0 +1,28 @@
+/* VideoContent.css */
+.video-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .video-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .video-player {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  iframe {
+    width: 100%;
+    max-width: 800px;
+    height: 450px;
+    border: none;
+  }
+  

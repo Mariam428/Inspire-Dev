@@ -11,6 +11,9 @@ import Setup from "./Components/study-plan/weeklyplan";
 import Grades from "./Components/study-plan/grades";
 import Availability from "./Components/study-plan/availability"
 import Schedule from "./Components/study-plan/schedule"
+import Classes from "./Components/Classes";
+import Videos from "./Components/Videos";
+import VideoContent from "./Components/VideoContent";
 
 import "./App.css";
 
@@ -43,6 +46,9 @@ function Layout() {
           <Route path="/study-plan/grades" element={<Grades />} />
           <Route path="/study-plan/availability" element={<Availability />} />
           <Route path="/study-plan/schedule" element={<Schedule/>} />
+          <Route path="/classes" element={<Classes />} />
+          <Route path="/videos/:subjectName" element={<Videos />} />
+          <Route path="/video-content/:subjectName/:videoName" element={<VideoContent />} />
         </Routes>
       </div>
     </div>
