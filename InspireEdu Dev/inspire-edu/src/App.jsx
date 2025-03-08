@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import SideBar from "./Components/SideBar";
-import Dashboard from "./Components/Dashboard";
-import Login from "./Components/Login";
+import SideBar from "./Components/TeacherSideBar";
+import Dashboard from "./Components/TeacherDashboard";
 import "./App.css";
 
 function App() {
@@ -15,7 +14,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/Dashboard" replace />} />
             <Route path="/Dashboard" element={<Dashboard />} />
-            <Route path="/Login" element={<Login />} />
           </Routes>
         </div>
       </div>

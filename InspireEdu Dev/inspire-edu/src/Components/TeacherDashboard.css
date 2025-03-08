@@ -6,17 +6,8 @@
     flex-grow: 1; 
     padding: 10px;
     box-sizing: border-box;
-    overflow: hidden; 
-    height: auto;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 24px;
-    width: 100%;
-    box-sizing: border-box; /* Ensures padding does not cause overflow */
     overflow: hidden;
+    height: auto;
 }
 
 .dashboard-header {
@@ -28,6 +19,7 @@
     font-size: 24px;
     font-weight: 600;
     color: #333;
+
   }
   
   .logout-btn {
@@ -43,6 +35,7 @@
     background-color: #f3e5d7;
     padding: 24px;
     border-radius: 12px;
+    align-items: center;
   }
   
   .welcome-card h2 {
@@ -50,16 +43,7 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 8px;
-  }
-  
-  .welcome-card p {
-    color: #8b5e34;
-  }
-  
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    align-items: center;
   }
   
   .section-card {
@@ -70,13 +54,8 @@
     box-sizing: border-box;
 }
 
-  
-  .section-card.study {
+  .section-card {
     background-color: #e8f4ff;
-  }
-  
-  .section-card.quizzes {
-    background-color: #e8f4ea;
   }
   
   .section-header {
@@ -92,22 +71,40 @@
   }
   
   .content-card {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
     background-color: white;
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 16px;
+    align-items: center;
+    gap:20px;
+    box-shadow: #333;
   }
-  
-  .content-card:last-child {
-    margin-bottom: 0;
-  }
-  
-  .content-card h3 {
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  
+
   .content-card p {
     color: #666;
-    font-size: 14px;
+    font-size: 24px;
+  }
+  .content-card button{
+    height: 50px;
+    display: flex;
+    justify-content:space-between;
+    width: 200px;
+    border-radius: 50px;
+    align-items: center;
+    background-color: #fff3cd;
+    gap: 30px;
+  }
+  .content-card .icon {
+    width: 128px;
+  }
+  .content-card .photo {
+    width: 200px;
+  }
+  .content-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
   }
