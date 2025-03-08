@@ -4,20 +4,35 @@ import "./Login.css";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");  // Added name field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("student");  // Default to student
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("userPassword", password);
-    alert("Registration successful! You can now log in.");
-    navigate("/Login");
+
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Registration failed");
+
+      alert("Registration successful! You can now log in.");
+      navigate("/login");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -30,7 +45,16 @@ const Register = () => {
       <div className="login-card">
         <h2>Register</h2>
         <form onSubmit={handleRegister}>
-        <label>Email:</label>
+          <label>Name:</label>
+          <div className="input-group">
+            <input 
+              type="text" 
+              value={name} 
+              onChange={(e) => setName(e.target.value)} 
+              required 
+            />
+          </div>
+          <label>Email:</label>
           <div className="input-group">
             <input 
               type="email" 
@@ -57,10 +81,32 @@ const Register = () => {
               required 
             />
           </div>
+
+          {/* Role Selection */}
+          <label>Register As:</label>
+          <div className="input-group">
+            <label>
+              <input 
+                type="radio" 
+                value="student" 
+                checked={role === "student"} 
+                onChange={() => setRole("student")}
+              /> Student
+            </label>
+            <label>
+              <input 
+                type="radio" 
+                value="educator" 
+                checked={role === "educator"} 
+                onChange={() => setRole("educator")}
+              /> Educator
+            </label>
+          </div>
+
           <button type="submit" className="login-btn">Register</button>
         </form>
 
-        <p>Already have an account? <span onClick={() => navigate("/Login")} className="link">Login</span></p>
+        <p>Already have an account? <span onClick={() => navigate("/login")} className="link">Login</span></p>
       </div>
     </div>
   );

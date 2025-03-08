@@ -7,17 +7,36 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Logging in with:", email, password);
-
-    if (email && password) {
-      localStorage.setItem('isAuthenticated', 'true');
-      navigate('/dashboard');
-    } else {
-      alert('Please enter email and password');
+  
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Login failed");
+  
+      // Store token & role
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+  
+      // Redirect user based on role
+      if (data.role === "student") {
+        navigate("/student-dashboard");
+      } else {
+        navigate("/educator-dashboard");
+      }
+  
+    } catch (error) {
+      alert(error.message);
     }
   };
+  
+  
 
   return (
     <div className="login-container">
