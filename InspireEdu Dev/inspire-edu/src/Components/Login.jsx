@@ -29,8 +29,8 @@ const Login = () => {
       <div className="login-card">
         <h2>Login</h2>
         <form onSubmit={handleLogin}>
+        <label>Email:</label>
           <div className="input-group">
-            <label>Email:</label>
             <input 
               type="email" 
               value={email} 
@@ -38,9 +38,9 @@ const Login = () => {
               required 
             />
           </div>
-
+          <label>Password:</label>
           <div className="input-group">
-            <label>Password:</label>
+            
             <input 
               type="password" 
               value={password} 

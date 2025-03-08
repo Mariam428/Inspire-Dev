@@ -65,7 +65,7 @@
   width: 100%;
   max-width: 100%; /* Ensures no overflow */
   padding: 24px;
-  border-radius: 12px;
+  border-radius: 10px;
   box-sizing: border-box;
 }
 
