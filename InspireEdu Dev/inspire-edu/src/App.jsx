@@ -14,7 +14,10 @@ import Schedule from "./Components/study-plan/schedule";
 import EducatorDashboard from "./Components/TeacherDashboard"; 
 import ProtectedRoute from "./Components/ProtectedRoute"; 
 import TeacherSidebar from "./Components/TeacherSideBar";
-import LectureResources from "./Components/LectureResources";
+import LectureResources from "./Components/LectureResources";import Classes from "./Components/Classes";
+import Videos from "./Components/Videos";
+import VideoContent from "./Components/VideoContent";
+
 import "./App.css";
 
 function Layout() {
@@ -50,6 +53,9 @@ function Layout() {
           <Route path="/study-plan/grades" element={<Grades />} />
           <Route path="/study-plan/availability" element={<Availability />} />
           <Route path="/study-plan/schedule" element={<Schedule />} />
+          <Route path="/classes" element={<Classes />} />
+          <Route path="/videos/:subjectName" element={<Videos />} />
+          <Route path="/video-content/:subjectName/:videoName" element={<VideoContent />} />
 
           {/* Protected Routes for Students */}
           <Route element={<ProtectedRoute allowedRoles={["student"]} />}>

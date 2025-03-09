@@ -12,26 +12,26 @@ const scheduleData = {
     {
       subject: "Image Processing",
       hours: 3.0,
-      details: ["Study lecture: 6 (PDF)", "Rewatch lecture: 5 & take notes"],
+      details: ["Study lecture: 6 (PDF)"],
     },
   ],
   Tuesday: [
     {
       subject: "Image Processing",
       hours: 3.0,
-      details: ["Study lecture: 6 (PDF)", "Rewatch lecture: 5 & take notes"],
+      details: [ "Rewatch lecture: 5 & take notes"],
     },
     {
       subject: "Logic Programming",
       hours: 2.0,
-      details: ["Study lecture: 6 (PDF)", "Summarize key points from lecture: 5"],
+      details: ["Study lecture: 6 (PDF)"],
     },
   ],
   Wednesday: [
     {
       subject: "Logic Programming",
       hours: 2.0,
-      details: ["Study lecture: 6 (PDF)", "Summarize key points from lecture: 5"],
+      details: [ "Summarize key points from lecture: 5"],
     },
     {
       subject: "DSP",
@@ -48,10 +48,12 @@ const Schedule = () => {
   const [notes, setNotes] = useState("");
 
   return (
+    
     <div className="schedule-container">
+       <h1 className="page-header">Weekly<br />Planner</h1>
       {allDays.map((day) => (
         <div key={day} className="day-card-sched">
-          <h2>{day}</h2>
+          <h2 className="day">{day}</h2>
           {scheduleData[day] ? (
             scheduleData[day].map((task, index) => (
               <div key={index} className="task">
@@ -67,18 +69,9 @@ const Schedule = () => {
             <p>Day unavailable</p>
           )}
         </div>
-      ))}
-
-      {/* Additional Notes Card */}
-      <div className="day-card notes-card">
-        <h2>Additional Notes</h2>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Write your notes here..."
-        />
-      </div>
+      ))}   
     </div>
+    
   );
 };
 

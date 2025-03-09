@@ -3,66 +3,151 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* Enable scrolling */
+  overflow-y: auto;
 }
 
-/* Ensure schedule container stretches fully */
+/* Page Header Styling (optional enhancement) */
+.page-header {
+  font-size: 48px;             /* Bigger font size */
+  font-style: italic;          /* Italic text */
+  text-align: center;          /* Center alignment */
+  color: rgb(68, 20, 36);              /* Rich brown tone (you can change it) */
+  margin-top: 20px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);  /* Soft shadow */
+  font-family: 'Georgia', serif;  /* Elegant font */
+  letter-spacing: 1px;
+}
+
+
+/* Schedule container grid */
 .schedule-container {
+  
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); /* Slightly smaller cards */
+  gap: 4px; /* Less spacing between cards */
+  padding: 10px;
   max-width: 1200px;
   margin: auto;
-  min-height: 100vh; /* Ensure it covers full viewport */
+  min-height: 100vh;
+  height: 50vw;
+  width: 75vw;
 }
 
-/* Wrap content inside a scrollable section */
+/* Scrollable content wrapper */
 .main-content {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Full height */
-  overflow-y: auto; /* Enable scrolling */
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
-/* Cards should expand correctly */
+/* Day card styling */
 .day-card-sched {
-  background-image: url('/day-sched.jpg'); 
+  background-color: #f3e2d7;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border-radius: 12px;
-  padding: 15px; /* Reduced padding */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0px;
+  border: 2px solid #4a2c1e;
+  padding: 6px; /* Reduced padding */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: #4a4a4a;
-  min-height: 150px; /* Adjusted height */
-  max-width: 250px; /* Limited width */
-  width: 80%; /* Responsive width */
+  color: #000000;
+  min-height: 130px;
+  max-height: 300px;
+  max-width: 230px;
+  width: 90%; /* Slightly more compact */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  font-family: cursive;
-  font-size: small;
-  overflow-y: auto; /* Enables vertical scrollbar if needed */
-  max-height: 300px; /* Adjust as needed */
+  /* justify-content: space-between; */
+  justify-content: flex-start; /* Align content to the top */
+  font-family: 'Times New Roman';
+  font-size: 12px;
+  overflow-y: auto;
   margin: 2px;
 }
-
-
-/* Hover effect */
-.day-card-sched:hover {
-  transform: scale(1.05); 
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
+.task {
+  padding: 0;
+  margin: 0;
+  line-height: 1.3;
 }
 
-/* Prevents textarea from shrinking too much */
-.notes-card textarea {
-  width: 100%;
-  height: 120px; /* Slightly larger for better usability */
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  resize: none;
+.task strong {
+  display: block;
+  margin-bottom: 0px; /* Reduce space below the subject line */
+  font-size: 14px;
 }
+
+.task ul {
+  margin: 0;
+  padding-left: 16px;
+  line-height: 1.2;
+}
+
+.task li {
+  margin-bottom: 2px; /* Reduce space between bullet points */
+  font-size: 13px;
+}
+
+
+
+/* Day label */
+.day {
+  color: #8b5e34;
+  font-size: 20px;
+  margin-bottom: 4px;
+  font-style: italic;
+  background-color: #f8ece3;
+  height: auto;
+}
+
+/* Notes textarea */
+
+
+
+.schedule-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Maximum 4 columns */
+  grid-template-rows: auto; /* Auto height */
+  gap: 20px; /* Adjust spacing */
+  justify-content: center; /* Center the content */
+  padding: 20px;
+}
+
+.day-card-sched {
+  background: #f5e1d1;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.day-card-sched:nth-child(1),
+.day-card-sched:nth-child(2),
+.day-card-sched:nth-child(3) {
+  grid-column: span 1; /* First row: 3 cards */
+}
+
+.day-card-sched:nth-child(4) {
+  grid-column: 1 / span 4; /* Moves 4th item to the new row */
+}
+
+.day-card-sched:nth-child(n+4) {
+  grid-column: span 1; /* Second row: 4 cards */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

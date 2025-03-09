@@ -1,0 +1,84 @@
+/* Main container */
+.classes-container {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: auto;
+  }
+  
+  /* Title */
+  .classes-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+  }
+  
+  /* Grid layout */
+  .classes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Class Card */
+  .class-card {
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    min-height: 150px;
+    background-color: white;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  
+  /* Hover effect */
+  .class-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Text Styling for Classes */
+  .class-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 150px;
+    overflow-wrap: break-word;
+  }
+  
+  /* Color Classes for Backgrounds */
+  .bg-green-100 { background-color: #d1fae5 !important; }
+  .bg-orange-100 { background-color: #ffedd5 !important; }
+  .bg-red-100 { background-color: #fee2e2 !important; }
+  .bg-blue-100 { background-color: #dbeafe !important; }
+  .bg-gray-100 { background-color: #f3f4f6 !important; }
+  .bg-yellow-100 { background-color: #fef9c3 !important; }
+  
+  /* Color Classes for Text */
+  .text-green-700 { color: #047857 !important; }
+  .text-orange-700 { color: #c2410c !important; }
+  .text-red-700 { color: #b91c1c !important; }
+  .text-blue-700 { color: #1d4ed8 !important; }
+  .text-gray-700 { color: #374151 !important; }
+  .text-yellow-700 { color: #a16207 !important; }
+  
+  /* Border Colors */
+  .border-green-300 { border: 2px solid #86efac !important; }
+  .border-orange-300 { border: 2px solid #fdba74 !important; }
+  .border-red-300 { border: 2px solid #fca5a5 !important; }
+  .border-blue-300 { border: 2px solid #93c5fd !important; }
+  .border-gray-300 { border: 2px solid #d1d5db !important; }
+  .border-yellow-300 { border: 2px solid #fde047 !important; }
+  
