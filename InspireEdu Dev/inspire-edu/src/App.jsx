@@ -6,14 +6,15 @@ import Register from "./Components/Register";
 import ForgotPassword from "./Components/ForgotPassword";
 import Resources from "./Components/Resources";
 import Lectures from "./Components/Lectures";
-import LectureContent from "./Components/LectureContent"; // Import the new component
+import LectureContent from "./Components/LectureContent"; 
 import Setup from "./Components/study-plan/weeklyplan";
 import Grades from "./Components/study-plan/grades";
 import Availability from "./Components/study-plan/availability";
 import Schedule from "./Components/study-plan/schedule";
-import EducatorDashboard from "./Components/TeacherDashboard"; // Import educator dashboard
-import ProtectedRoute from "./Components/ProtectedRoute"; // Import protected route
+import EducatorDashboard from "./Components/TeacherDashboard"; 
+import ProtectedRoute from "./Components/ProtectedRoute"; 
 import TeacherSidebar from "./Components/TeacherSideBar";
+import LectureResources from "./Components/LectureResources";
 import "./App.css";
 
 function Layout() {
@@ -44,7 +45,7 @@ function Layout() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/lectures/:subjectName" element={<Lectures />} />
-          <Route path="/lecture-content/:subjectName/:lectureName" element={<LectureContent />} />
+          <Route path="/lecture-content/:subjectName/:lectureName" element={<LectureResources />} />
           <Route path="/study-plan/weeklyplan" element={<Setup />} />
           <Route path="/study-plan/grades" element={<Grades />} />
           <Route path="/study-plan/availability" element={<Availability />} />

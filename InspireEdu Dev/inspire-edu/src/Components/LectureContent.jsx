@@ -1,85 +1,54 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 import "./LectureContent.css";
 
-const lectureResources = [
-  { title: "Lecture PDF", icon: "📄", type: "pdf" },
-  { title: "Quiz", icon: "📝", type: "quiz" },
-  { title: "Summary", icon: "📖", type: "summary" },
-  { title: "Ask a Question", icon: "🗪", type: "question" },
-];
-
 export default function LectureContent() {
-  const { lectureName } = useParams();
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [chatHistory, setChatHistory] = useState([]); // Stores chat messages
+  const { subjectName } = useParams();
+  const [lectures, setLectures] = useState([]); // Store uploaded lectures
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleAskQuestion = () => {
-    setShowChatbot(true);
-  };
+  useEffect(() => {
+    const fetchLectures = async () => {
+      try {
+        let formattedSubject = subjectName.trim().toUpperCase();
+        const response = await axios.get(`http://localhost:5000/lectures/${formattedSubject}`);
+        setLectures(response.data); // ✅ Store lectures from DB
+      } catch (error) {
+        console.error("Error fetching lectures", error);
+        setError("Failed to fetch lectures.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleSendQuestion = () => {
-    if (!question.trim()) return; // Prevent empty messages
-
-    // Add user message to chat history
-    const newChat = [...chatHistory, { sender: "user", text: question }];
-    
-    // Simulate bot response (replace this with API call later)
-    setTimeout(() => {
-      const botReply = { sender: "bot", text: "I received your question: " + question };
-      setChatHistory([...newChat, botReply]); // Update chat with bot response
-    }, 1000);
-
-    setChatHistory(newChat);
-    setQuestion(""); // Clear input after sending
-  };
+    fetchLectures();
+  }, [subjectName]);
 
   return (
-    <div className="lecture-content-container">
-      <h1 className="lecture-title">{lectureName}</h1>
-      <div className="lecture-resources-grid">
-        {lectureResources.map((resource, index) => (
-          <button
-            key={index}
-            className={`resource-card ${resource.type === "question" ? "question-card" : ""}`}
-            onClick={resource.type === "question" ? handleAskQuestion : null}
-          >
-            <span className="resource-icon">{resource.icon}</span>
-            <span className="resource-title">{resource.title}</span>
-          </button>
-        ))}
-      </div>
+    <div className="lectures-container">
+      <h1 className="subject-title">{subjectName}</h1>
 
-      {/* Chatbot Popup */}
-      {showChatbot && (
-        <div className="chatbot-container">
-          <div className="chatbot-header">
-            <h4>Ask a Question</h4>
-            <button className="close-btn" onClick={() => setShowChatbot(false)}>✖</button>
-          </div>
-
-          {/* Chat Messages Display */}
-          <div className="chatbot-messages">
-            {chatHistory.map((msg, index) => (
-              <div key={index} className={`chat-message ${msg.sender}`}>
-                {msg.text}
-              </div>
-            ))}
-          </div>
-
-          {/* Input Field for Sending Messages */}
-          <div className="chatbot-input">
-            <input
-              type="text"
-              placeholder="Type your question..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSendQuestion()} // Send on Enter key press
-            />
-            <button className="send-btn" onClick={handleSendQuestion}>Send</button>
-          </div>
+      {loading ? (
+        <p>Loading lectures...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : lectures.length > 0 ? (
+        <div className="lecture-list">
+          {lectures.map((lecture, index) => (
+            <Link 
+              key={index} 
+              to={`/lecture-content/${subjectName}/${lecture}`} 
+              className="lecture-card"
+            >
+              <span className="lecture-icon">📖</span>
+              <span className="lecture-title">{lecture}</span>
+            </Link>
+          ))}
         </div>
+      ) : (
+        <p>No lectures uploaded yet for this subject.</p>
       )}
     </div>
   );
