@@ -6,9 +6,15 @@
   }
  
   .availability-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
+    font-size: 48px;             /* Bigger font size */
+  font-style: italic;          /* Italic text */
+  text-align: center;          /* Center alignment */
+  color: rgb(68, 20, 36);              /* Rich brown tone (you can change it) */
+  margin-top: 20px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);  /* Soft shadow */
+  font-family: 'Georgia', serif;  /* Elegant font */
+  letter-spacing: 1px;
   }
   
   .calendar {
@@ -80,7 +86,7 @@
   }
   
   .availability-container {
-    background-image: url('/download.jpg');
+    
     height: 50vw;
   display: flex;
   flex-direction: column;
