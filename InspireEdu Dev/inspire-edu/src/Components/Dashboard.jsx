@@ -7,7 +7,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    navigate("/Login.jsx"); 
+    navigate("/Login"); 
   };
 
   return (
@@ -25,7 +25,7 @@ const Dashboard = () => {
       <div className="dashboard-grid">
         <div className="section-card study">
           <div className="section-header">
-            <span>📺</span>
+            <span><img src="/icons/studying_950232.png" alt="" /></span>
             <h2>Study</h2>
           </div>
           <div>
@@ -43,10 +43,9 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
         <div className="section-card quizzes">
           <div className="section-header">
-            <span>💡</span>
+            <span><img src="/icons/quiz_17897983.png" alt="" /></span>
             <h2>Quizzes</h2>
           </div>
           <div>
