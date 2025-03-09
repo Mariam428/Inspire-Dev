@@ -60,7 +60,8 @@ html, body {
   width: 90%; /* Slightly more compact */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  justify-content: flex-start; /* Align content to the top */
   font-family: 'Times New Roman';
   font-size: 12px;
   overflow-y: auto;
@@ -102,4 +103,51 @@ html, body {
 }
 
 /* Notes textarea */
+
+
+
+.schedule-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Maximum 4 columns */
+  grid-template-rows: auto; /* Auto height */
+  gap: 20px; /* Adjust spacing */
+  justify-content: center; /* Center the content */
+  padding: 20px;
+}
+
+.day-card-sched {
+  background: #f5e1d1;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.day-card-sched:nth-child(1),
+.day-card-sched:nth-child(2),
+.day-card-sched:nth-child(3) {
+  grid-column: span 1; /* First row: 3 cards */
+}
+
+.day-card-sched:nth-child(4) {
+  grid-column: 1 / span 4; /* Moves 4th item to the new row */
+}
+
+.day-card-sched:nth-child(n+4) {
+  grid-column: span 1; /* Second row: 4 cards */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
