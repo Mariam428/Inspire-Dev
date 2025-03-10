@@ -1,30 +1,38 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import Icons from "./Icons";
-import "./SideBar.css"; 
+import "./SideBar.css";
 
 const sidebarItems = [
-  { title: "Dashboard", icon: "/icons/apartment_13534337.png" },
-  { title: "Classes", icon: "/icons/books_18894128.png" },
-  { title: "Resources", icon: "/icons/notes_4898396.png" }
+  { title: "Dashboard", icon: "/icons/apartment_13534337.png" ,path: "/educator-dashboard"},
+  { title: "Classes", icon: "/icons/books_18894128.png" ,path: "/classes" },
+  { title: "Resources", icon: "/icons/notes_4898396.png" , path: "/resources"},
+  {title: "Add Course", icon: "/icons/plus_8001591.png" , path: "/Add-Course"}
 ];
 
-const SideBar = () => {
+const TeacherSideBar = () => {
   return (
     <div className="side-container">
       {/* Logo Section */}
       <div className="logo">
-        <img src="light.png" alt="Logo" /> 
+        <img src="light.png" alt="Logo" />
         <h2>InspireEdu</h2>
       </div>
 
-      {/* Sidebar Items */}
+      {/* Sidebar Items with Navigation */}
       <div className="menu">
         {sidebarItems.map((item, index) => (
-          <Icons key={index} path_title={item.title} icon_path={item.icon} />
+          <NavLink
+            key={index}
+            to={item.path}
+            className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+          >
+            <Icons path_title={item.title} icon_path={item.icon} />
+          </NavLink>
         ))}
       </div>
     </div>
   );
 };
 
-export default SideBar;
+export default TeacherSideBar;

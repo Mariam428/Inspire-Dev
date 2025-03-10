@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // For sending files to the backend
+import axios from "axios"; 
 import "./TeacherDashboard.css";
 
 const TeacherDashboard = () => {

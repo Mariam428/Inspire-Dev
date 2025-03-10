@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
+import "./StudentDashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -29,15 +29,15 @@ const Dashboard = () => {
             <h2>Study</h2>
           </div>
           <div>
-            <div className="content-card">
+            <div className="course-card">
               <h3>OS</h3>
               <p>• Lecture 1</p>
             </div>
-            <div className="content-card">
+            <div className="course-card">
               <h3>Electronics</h3>
               <p>• Lecture 2</p>
             </div>
-            <div className="content-card">
+            <div className="course-card">
               <h3>English</h3>
               <p>• Lecture 1</p>
             </div>
@@ -49,11 +49,11 @@ const Dashboard = () => {
             <h2>Quizzes</h2>
           </div>
           <div>
-            <div className="content-card">
+            <div className="course-card">
               <h3>DSP</h3>
               <p>• Quiz on lecture 1</p>
             </div>
-            <div className="content-card">
+            <div className="course-card">
               <h3>Neural Networks</h3>
               <p>• Quiz on lecture 2</p>
             </div>

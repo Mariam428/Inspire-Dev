@@ -10,6 +10,7 @@ const sidebarItems = [
   { title: "Study Plan", icon: "/icons/task_2098313.png", path: "/study-plan/weeklyplan" },
   // { title: "Chat", icon: "/icons/chat_589708.png", path: "/chat" },
   { title: "Preformance", icon: "/icons/graph_2815158.png", path: "/Preformance" },
+  {title: "Course Registeration", icon: "/icons/resume_14354165.png", path: "/Register-Course" }
 ];
 
 const SideBar = () => {
