@@ -1,0 +1,42 @@
+**1. What is the IoT equation according to the text? (Easy)**  
+A. Physical Object + Cloud + Sensors = IoT  
+B. Physical Object + Controller, Sensor and Actuator + Internet = IoT  
+C. Software + Electronics + Internet = IoT  
+D. Machine Learning + Big Data + Actuators = IoT  
+**Answer:** B  
+
+---
+
+**2. Which organization defined IoT as "a network of objects in your home or office...using the internet"? (Medium)**  
+A. Oxford Dictionary  
+B. IEEE Standards Association  
+C. Alliance for Internet of Things Innovations (AIOTI)  
+D. International Telecommunication Union (ITU)  
+**Answer:** C  
+
+---
+
+**3. Which of the following is NOT listed as an IoT communication protocol in the text? (Medium)**  
+A. ZigBee  
+B. RFID  
+C. HTTP  
+D. Bluetooth  
+**Answer:** C (HTTP is not explicitly mentioned, unlike RFID, Bluetooth, and ZigBee)  
+
+---
+
+**4. A system requires computationally intensive analysis of big data collected from a single IoT device. Which IoT level is most appropriate? (Hard)**  
+A. Level-1 (Device Level)  
+B. Level-3 (Cloud Analysis and Applications)  
+C. Level-5 (Coordinator Node)  
+D. Level-6 (Independent Nodes with Cloud Communication)  
+**Answer:** B (Level-3 states that data is stored/analyzed in the cloud with computationally intensive requirements)  
+
+---
+
+**5. How does IoT content creation differ from Traditional Networks? (Hard)**  
+A. IoT relies on human-generated content, while Traditional Networks use machines.  
+B. IoT uses explicitly defined links, while Traditional Networks use pushed information.  
+C. IoT content is created by machines, while Traditional Networks rely on humans.  
+D. IoT consumes content by request, while Traditional Networks use search engines.  
+**Answer:** C (The text states IoT content is created by machines, contrasting with Traditional Networks' human-centric creation)

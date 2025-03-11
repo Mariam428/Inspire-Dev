@@ -160,6 +160,56 @@ app.get("/lectures/:subject", async (req, res) => {
     }
 });
 
+// 🔹 Route to Handle Quiz Generation
+app.post("/generate-quiz", upload.single("file"), async (req, res) => {
+    console.log("📌 Quiz generation request received!");
+
+    try {
+        let { subject, lectureNumber } = req.body;
+        console.log("📌 Subject:", subject, "Lecture Number:", lectureNumber);
+
+        if (!req.file) {
+            console.error("❌ Error: No file uploaded");
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const filePath = `uploads/${req.file.filename}`;
+        console.log("📌 Uploaded file:", filePath);
+
+        // ✅ Log file details
+        const fileStats = fs.statSync(req.file.path);
+        console.log("📌 File size:", fileStats.size, "bytes");
+
+        if (fileStats.size === 0) {
+            console.error("❌ Error: The uploaded file is empty.");
+            return res.status(400).json({ error: "Uploaded file is empty" });
+        }
+
+        const quizPath = `uploads/quiz_${req.file.filename}.txt`;
+        console.log("📌 Generating quiz...");
+
+        exec(
+            `python main.py ${req.file.path} ${quizPath} ${process.env.OPENROUTER_API_KEY} 5`,
+            async (error, stdout, stderr) => {
+                console.log("📌 Python script output:", stdout);
+                console.log("📌 Python script error (if any):", stderr);
+
+                if (error) {
+                    console.error("❌ Error generating quiz:", error);
+                    return res.status(500).json({ error: "Failed to generate quiz" });
+                }
+
+                console.log("✅ Quiz generated successfully!");
+                res.json({ message: "Quiz generated successfully!", filePath, quizPath });
+            }
+        );
+    } catch (error) {
+        console.error("❌ Server error:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
 // 🔹 Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

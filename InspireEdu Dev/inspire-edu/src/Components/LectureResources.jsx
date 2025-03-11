@@ -30,6 +30,46 @@ export default function LectureResources() {
         fetchResources();
     }, [subjectName, lectureName]);
 
+    const handleQuizClick = async (e, quizPath, resource) => {
+        e.preventDefault();
+        console.log("Quiz button clicked!");
+    
+        if (!quizPath) {
+            try {
+                const formData = new FormData();
+                
+                // ✅ Fetch the actual file as a blob
+                const response = await axios.get(`http://localhost:5000${resource.filePath}`, { responseType: 'blob' });
+    
+                // ✅ Convert the blob into a real file
+                const file = new File([response.data], "lecture.pdf", { type: "application/pdf" });
+    
+                formData.append("file", file);
+                formData.append("subject", subjectName);
+                formData.append("lectureNumber", lectureName);
+    
+                console.log("Sending request to generate quiz...");
+                const quizResponse = await axios.post('http://localhost:5000/generate-quiz', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+    
+                console.log("Quiz generation response:", quizResponse.data);
+                if (quizResponse.data.quizPath) {
+                    const updatedResources = resources.map(res => 
+                        res.filePath === resource.filePath ? { ...res, quizPath: quizResponse.data.quizPath } : res
+                    );
+                    setResources(updatedResources);
+                }
+            } catch (error) {
+                console.error("❌ Error generating quiz:", error);
+            }
+        } else {
+            window.open(`http://localhost:5000${quizPath}`, '_blank');
+        }
+    };
+        
     return (
         <div className="lecture-content-container">
             <h1 className="lecture-title">{lectureName}</h1>
@@ -41,16 +81,44 @@ export default function LectureResources() {
             ) : resources.length > 0 ? (
                 <div className="lecture-resources-grid">
                     {resources.map((resource, index) => (
-                        <div key={index} className="resource-group">
-                            <a href={`http://localhost:5000${resource.filePath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
-                                📄 Lecture PDF
+                        <>
+                            <a 
+                                key={`${index}-pdf`} 
+                                href={`http://localhost:5000${resource.filePath}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="resource-card"
+                            >
+                                <span className="resource-icon">📄</span>
+                                <span className="resource-title">Lecture PDF</span>
                             </a>
+                            
                             {resource.summaryPath && (
-                                <a href={`http://localhost:5000${resource.summaryPath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
-                                    📑 Lecture Summary
+                                <a 
+                                    key={`${index}-summary`} 
+                                    href={`http://localhost:5000${resource.summaryPath}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="resource-card"
+                                >
+                                    <span className="resource-icon">📚</span>
+                                    <span className="resource-title">Summary</span>
                                 </a>
                             )}
-                        </div>
+                            
+                            {/* Always show Quiz button */}
+                            <a 
+                            key={`${index}-quiz`} 
+                            href={resource.quizPath ? `http://localhost:5000${resource.quizPath}` : '#'}
+                            onClick={(e) => handleQuizClick(e, resource.quizPath, resource)} // Ensure this is correct
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className={`resource-card ${resource.quizPath ? '' : 'disabled'}`}
+                        >
+                            <span className="resource-icon">📝</span>
+                            <span className="resource-title">Quiz</span>
+                        </a>
+                        </>
                     ))}
                 </div>
             ) : (
