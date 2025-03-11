@@ -21,7 +21,7 @@ import Courses from "./Components/Courses";
 import AddCourses from "./Components/AddCourse";
 
 
-import "./App.css";
+import "./App.css";     
 
 function Layout() {
   const location = useLocation();

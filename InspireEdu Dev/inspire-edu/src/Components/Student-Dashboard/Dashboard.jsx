@@ -9,6 +9,8 @@ const Dashboard = () => {
     localStorage.removeItem("authToken");
     navigate("/Login"); 
   };
+  const email = localStorage.getItem("email");
+  const studentName = email ? email.match(/^([^@]+)/)?.[1] : "Student";
 
   return (
     <div className="dashboard-container">
@@ -18,7 +20,7 @@ const Dashboard = () => {
       </div>
 
       <div className="welcome-card">
-        <h2>Welcome, Student</h2>
+        <h2>Welcome, {studentName} </h2>
         <p>Your tasks for today</p>
       </div>
 

@@ -1,33 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Classes.css";
 
-const subjects = [
-  { name: "OS", color: "bg-green-100", textColor: "text-green-700", border: "border-green-300" },
-  { name: "Compiler", color: "bg-orange-100", textColor: "text-orange-700", border: "border-orange-300" },
-  { name: "Computer Networks", color: "bg-red-100", textColor: "text-red-700", border: "border-red-300" },
-  { name: "Algorithm Analysis", color: "bg-blue-100", textColor: "text-blue-700", border: "border-blue-300" },
-  { name: "NLP", color: "bg-gray-100", textColor: "text-gray-700", border: "border-gray-300" },
-  { name: "SAAD", color: "bg-yellow-100", textColor: "text-yellow-700", border: "border-yellow-300" },
-];
-
 export default function Classes() {
   const navigate = useNavigate();
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
+  useEffect(() => {
+    const courses = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    console.log("✅ Enrolled courses from localStorage:", courses); // 👈 Debug log
+    setEnrolledCourses(courses);
+  }, []);
+  
   return (
     <div className="classes-container">
-      <h1 className="classes-title">Videos</h1>
-      <div className="classes-grid">
-        {subjects.map((subject, index) => (
-          <button
-            key={index}
-            className={`class-card ${subject.color} ${subject.border}`}
-            onClick={() => navigate(`/videos/${subject.name.replace(/\s+/g, "_")}`)}
-          >
-            <h2 className={`class-title ${subject.textColor}`}>{subject.name}</h2>
-          </button>
-        ))}
-      </div>
+      <h1 className="classes-title">Lecture Recordings</h1>
+
+      {enrolledCourses.length === 0 ? (
+        <p className="text-center text-gray-600 mt-6 text-lg">
+          Nothing to show, <span className="font-semibold">Enroll</span> to view Course Videos.
+        </p>
+      ) : (
+        <div className="classes-grid">
+          {enrolledCourses.map((course, index) => {
+            const courseName = course || "Unknown Course";
+            return (
+              <button
+                key={index}
+                className="class-card bg-blue-100 border border-blue-300 hover:bg-blue-200 transition-all"
+                onClick={() => navigate(`/videos/${courseName.replace(/\s+/g, "_")}`)}
+              >
+                <h2 className="class-title text-blue-700">{courseName}</h2>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

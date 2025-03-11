@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
+
 // 🔹 Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("✅ MongoDB Connected"))
@@ -27,6 +28,50 @@ const UserSchema = new mongoose.Schema({
     role: { type: String, enum: ["student", "educator"], required: true }
 });
 const User = mongoose.model("User", UserSchema);
+//enrollement schema
+const CourseEnrollmentSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
+  courseId: {
+    type: String,
+    required: true
+  },
+  enrolledAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+const CourseEnrollment = mongoose.model("CourseEnrollment", CourseEnrollmentSchema);
+module.exports = CourseEnrollment;
+//Enrollement API
+app.post("/enroll", async (req, res) => {
+    const { userId, courseId } = req.body;
+  
+    try {
+      const newEnrollment = new CourseEnrollment({ userId, courseId });
+      await newEnrollment.save();
+      res.status(201).json({ message: "Enrolled successfully" }); // Add a success response
+    } catch (error) {
+      res.status(500).json({ error: "Failed to enroll" }); // Handle error gracefully
+    }
+  });
+  
+  //GET enrolled courses API
+  
+app.get("/enrollments/:userId", async (req, res) => {
+    const userId = req.params.userId; // ⬅️ gets the userId from the URL
+  
+    try {
+      const enrollments = await CourseEnrollment.find({ userId }); // ⬅️ query MongoDB
+      res.json(enrollments); // ⬅️ return the list of enrolled courses
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get enrollments" });
+    }
+  });
+  
+
 
 // 🔹 Resource Schema
 const ResourceSchema = new mongoose.Schema({

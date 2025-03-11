@@ -58,7 +58,10 @@
   .courses-card button:hover {
     background-color: rgba(255, 255, 255, 0.8);
   }
-  
+  .enroll-btn:hover
+  {
+   color: rgb(127, 138, 255);
+  }
   .courses-card button p {
     margin: 0;
   }

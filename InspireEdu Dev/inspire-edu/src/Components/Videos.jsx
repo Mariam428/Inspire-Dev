@@ -45,7 +45,7 @@ export default function Videos() {
             </div>
           ))
         ) : (
-          <p>No videos available for this subject.</p>
+          <p>No Lecture Records available for this subject.</p>
         )}
       </div>
     </div>

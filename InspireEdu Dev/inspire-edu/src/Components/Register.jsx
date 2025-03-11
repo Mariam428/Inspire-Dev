@@ -5,7 +5,7 @@ import "./Login.css";
 const Register = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");  // Added name field
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");    
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("student");  // Default to student

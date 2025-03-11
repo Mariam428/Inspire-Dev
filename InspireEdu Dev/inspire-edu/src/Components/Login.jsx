@@ -10,7 +10,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
   
-    try {
+    try {          
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -20,9 +20,11 @@ const Login = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
   
-      // Store token & role
+      // Store token & role & email
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("email", email);
+      //const email = localStorage.getItem("email"); in other files
   
       // Redirect user based on role
       if (data.role === "student") {

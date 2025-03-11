@@ -2,6 +2,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1rem;
+    
   }
   
   .courses-title {
@@ -55,7 +56,7 @@
   
   .add-course:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px rgba(140, 8, 8, 0.1);
     background-color: #e5e7eb;
   }
   

@@ -1,6 +1,6 @@
 import sys
 import io
-import fitz
+import fitz  
 import re
 import numpy as np
 import pysbd
