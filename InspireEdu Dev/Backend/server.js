@@ -88,11 +88,55 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 
 //for plan_v0 python script
 // 🔹 Route to Run Python Study Plan Script
-app.post("/generate-plan", (req, res) => {
-    console.log("✅ POST /generate-plan was hit!");
-    res.json({ message: "Route reachable ✅" });
-  });  
-  
+//
+//
+//
+//
+//
+const express = require("express");
+
+const cors = require("cors");
+const fs = require("fs");
+const { exec } = require("child_process");
+const path = require("path");
+
+app.use(cors());
+app.use(express.json());
+
+app.post("/generate", (req, res) => {
+  const { availability, grades } = req.body;
+
+  console.log("✅ POST /generate was hit!");
+  console.log("📥 Received availability:", availability);
+  console.log("📥 Received grades:", grades);
+
+  // Save availability and grades as temp JSON files
+  fs.writeFileSync("temp_availability.json", JSON.stringify(availability));
+  fs.writeFileSync("temp_grades.json", JSON.stringify(grades));
+
+  const pythonScriptPath = path.join(__dirname, "plan_v0.py");
+
+  // Execute the Python script
+  exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error("❌ Python script error:", error);
+      return res.status(500).json({ error: "Failed to generate plan" });
+    }
+
+    console.log("🐍 Python script executed successfully");
+    console.log("📤 Python output:", stdout);
+
+    try {
+      const scheduleData = JSON.parse(stdout); // Parse Python script output
+      res.json({ message: "Plan generated successfully ✅", scheduleData });
+    } catch (parseErr) {
+      console.error("❌ Failed to parse Python output:", parseErr);
+      res.status(500).json({ error: "Invalid output from Python script" });
+    }
+  });
+});
+
+
   
 
 // 🔹 Configure Multer for File Uploads
