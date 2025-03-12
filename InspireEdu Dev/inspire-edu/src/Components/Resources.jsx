@@ -4,39 +4,60 @@ import "./Resources.css";
 
 export default function Resources() {
   const navigate = useNavigate();
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const userRole = localStorage.getItem("role"); // Get user role
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    const rawCourses = localStorage.getItem("enrolledCourses");
-    console.log("🔍 Raw localStorage value:", rawCourses);
+    const fetchCourses = async () => {
+      try {
+        let coursesData = [];
 
-    let parsedCourses = [];
+        if (userRole === "educator") {
+          // Fetch all courses if the user is an educator
+          const response = await fetch("http://localhost:5000/courses"); // Adjust API URL
+          const data = await response.json();
 
-    try {
-      parsedCourses = JSON.parse(rawCourses) || [];
-      console.log("✅ Parsed enrolledCourses:", parsedCourses);
-    } catch (error) {
-      console.error("❌ Failed to parse enrolledCourses:", error);
-    }
+          if (response.ok) {
+            coursesData = data.map(course => course.name); // Assuming courses have a 'name' field
+          }
+        } else {
+          // Fetch only enrolled courses from localStorage
+          const rawCourses = localStorage.getItem("enrolledCourses");
+          console.log("🔍 Raw localStorage value:", rawCourses);
 
-    setEnrolledCourses(parsedCourses);
-  }, []);
+          try {
+            coursesData = JSON.parse(rawCourses) || [];
+          } catch (error) {
+            console.error("❌ Failed to parse enrolledCourses:", error);
+          }
+        }
+
+        console.log("✅ Retrieved courses:", coursesData);
+        setCourses(coursesData);
+      } catch (error) {
+        console.error("❌ Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, [userRole]);
 
   return (
     <div className="resources-container">
       <h1 className="resources-title">Resources</h1>
 
-      {enrolledCourses.length === 0 ? (
+      {courses.length === 0 ? (
         <p className="text-center text-gray-600 mt-6 text-lg">
-          Nothing to show, <span className="font-semibold">Enroll</span> to view Lecture PDFs.
+          Nothing to show,{" "}
+          <span className="font-semibold">
+            {userRole === "educator" ? "Add" : "Enroll"}
+          </span>{" "}
+          to view Lecture PDFs.
         </p>
       ) : (
         <div className="resources-grid">
-          {enrolledCourses.map((course, index) => {
-            // Handle both string or object format
+          {courses.map((course, index) => {
             const courseName = typeof course === "string" ? course : course?.courseId || "Unnamed Course";
-
-            
 
             return (
               <button

@@ -93,12 +93,17 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 //
 //
 //
-const express = require("express");
 
-const cors = require("cors");
-const fs = require("fs");
-const { exec } = require("child_process");
-const path = require("path");
+// 🔹 Course Schema
+const CourseSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  color: { type: String, required: true },
+  textColor: { type: String, required: true },
+  borderColor: { type: String, required: true }
+});
+
+const Course = mongoose.model("Course", CourseSchema);
+module.exports = Course;
 
 app.use(cors());
 app.use(express.json());
@@ -135,9 +140,6 @@ app.post("/generate", (req, res) => {
     }
   });
 });
-
-
-  
 
 // 🔹 Configure Multer for File Uploads
 const storage = multer.diskStorage({
@@ -183,6 +185,72 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ token, role: user.role });
+});
+
+// 🔹 API to Add a New Course
+const colors = [
+  { bg: "bg-green-100", text: "text-green-700", border: "border-green-300" },
+  { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-300" },
+  { bg: "bg-red-100", text: "text-red-700", border: "border-red-300" },
+  { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-300" },
+  { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-300" }
+];
+
+app.post("/courses", async (req, res) => {
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: "Course name is required" });
+  }
+
+  try {
+    const courseExists = await Course.findOne({ name });
+    if (courseExists) {
+      return res.status(400).json({ error: "Course already exists" });
+    }
+
+    // Get the index for the new course based on the number of existing courses
+    const totalCourses = await Course.countDocuments();
+    const index = totalCourses % colors.length; // Loop through colors
+
+    const newCourse = new Course({
+      name,
+      color: colors[index].bg,
+      textColor: colors[index].text,
+      borderColor: colors[index].border
+    });
+
+    await newCourse.save();
+    res.status(201).json({ message: "Course added successfully", course: newCourse });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add course" });
+  }
+});
+
+
+// 🔹 API to Delete a Course by Name
+app.delete("/courses/:name", async (req, res) => {
+  const { name } = req.params;
+
+  try {
+      const deletedCourse = await Course.findOneAndDelete({ name });
+      if (!deletedCourse) {
+          return res.status(404).json({ error: "Course not found" });
+      }
+      res.json({ message: "Course deleted successfully" });
+  } catch (error) {
+      res.status(500).json({ error: "Failed to delete course" });
+  }
+});
+
+// 🔹 API to Get All Courses
+app.get("/courses", async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.json(courses);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch courses" });
+  }
 });
 
 // 🔹 Route to Handle Resource Upload and Summarization
