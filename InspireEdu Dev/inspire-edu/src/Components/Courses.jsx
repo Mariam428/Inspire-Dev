@@ -54,13 +54,16 @@ export default function Courses() {
       });
 
       const data = await response.json();
+      
 
       if (response.ok) {
-        alert("Enrolled successfully!");
-        const updatedCourses = [...enrolledCourses, data];
-        setEnrolledCourses(updatedCourses);
-        const courseNames = updatedCourses.map((course) => course?.courseId);
-        localStorage.setItem("enrolledCourses", JSON.stringify(courseNames));
+        const updatedCourses = [...enrolledCourses, { courseId: selectedCourse }];
+
+       setEnrolledCourses(updatedCourses);
+
+       const courseNames = updatedCourses.map((course) => course?.courseId);
+       localStorage.setItem("enrolledCourses", JSON.stringify(courseNames));
+        
       } else {
         alert("Enrollment failed: " + data.error);
       }
@@ -75,7 +78,7 @@ export default function Courses() {
       <h1 className="courses-title">Available Courses</h1>
       <div className="courses-grid">
         {subjects.map((subject, index) => {
-          const isEnrolled = enrolledCourses.some((c) => c?.courseId?.name === subject.name);
+           const isEnrolled = enrolledCourses.some((c) => c?.courseId === subject.name);
           return (
             <div key={index} className={`courses-card ${subject.color} ${subject.border}`}>
               <h2 className={`courses-title ${subject.textColor}`}>{subject.name}</h2>

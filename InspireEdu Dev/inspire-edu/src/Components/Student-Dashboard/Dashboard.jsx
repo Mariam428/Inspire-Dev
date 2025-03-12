@@ -10,7 +10,8 @@ const Dashboard = () => {
     navigate("/Login"); 
   };
   const email = localStorage.getItem("email");
-  const studentName = email ? email.match(/^([^@]+)/)?.[1] : "Student";
+  const student_name = email ? email.match(/^([^@]+)/)?.[1] : "Student";
+  console.log(student_name)
 
   return (
     <div className="dashboard-container">
@@ -20,7 +21,7 @@ const Dashboard = () => {
       </div>
 
       <div className="welcome-card">
-        <h2>Welcome, {studentName} </h2>
+        <h2>Welcome, {student_name} </h2>
         <p>Your tasks for today</p>
       </div>
 

@@ -19,12 +19,28 @@ const Login = () => {
   
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
+     
+
+
+
+
   
       // Store token & role & email
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
       localStorage.setItem("email", email);
       //const email = localStorage.getItem("email"); in other files
+      
+    // ✅ Fetch enrolled courses for the logged-in user
+    //we will need to fetch all needed user data in this step// IMPORT
+    const enrolledRes = await fetch(`http://localhost:5000/enrollments/${email}`);
+    const enrolledData = await enrolledRes.json();
+
+    if (enrolledRes.ok && Array.isArray(enrolledData)) {
+      localStorage.setItem("enrolledCourses", JSON.stringify(enrolledData.map((course) => course?.courseId)));
+    } else {
+      console.error("Failed to fetch enrolled courses:", enrolledData.error);
+    }
   
       // Redirect user based on role
       if (data.role === "student") {

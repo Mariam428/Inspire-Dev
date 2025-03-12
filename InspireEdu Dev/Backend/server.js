@@ -45,6 +45,10 @@ const CourseEnrollmentSchema = new mongoose.Schema({
 });
 const CourseEnrollment = mongoose.model("CourseEnrollment", CourseEnrollmentSchema);
 module.exports = CourseEnrollment;
+
+  
+  
+  
 //Enrollement API
 app.post("/enroll", async (req, res) => {
     const { userId, courseId } = req.body;
@@ -81,6 +85,15 @@ const ResourceSchema = new mongoose.Schema({
     summaryPath: String, // Add this field for storing the summary file path
 });
 const Resource = mongoose.model("Resource", ResourceSchema);
+
+//for plan_v0 python script
+// 🔹 Route to Run Python Study Plan Script
+app.post("/generate-plan", (req, res) => {
+    console.log("✅ POST /generate-plan was hit!");
+    res.json({ message: "Route reachable ✅" });
+  });  
+  
+  
 
 // 🔹 Configure Multer for File Uploads
 const storage = multer.diskStorage({

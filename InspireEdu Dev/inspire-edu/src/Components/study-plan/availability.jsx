@@ -21,16 +21,30 @@ export default function Availability() {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("Selected Availability:", availability);
-    
+  
     const formattedSummary = Object.entries(availability)
       .filter(([_, hours]) => hours > 0)
       .map(([day, hours]) => `${day}: ${hours} hour${hours > 1 ? "s" : ""}`)
       .join("\n");
+  
+     setSummary(formattedSummary);
+  
+     try {
+      const response = await fetch("http://localhost:5000/generate-plan", {
+        method: "POST",
+      });
 
-    setSummary(formattedSummary);
+      const data = await response.json();
+      console.log("✅ Backend Response:", data.message);
+      setResponseMessage(data.message);
+    } catch (error) {
+      console.error("❌ Error reaching backend:", error);
+      setResponseMessage("Failed to connect to backend");
+    }
   };
+  
 
   return (
     <div className="availability-container">
