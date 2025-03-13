@@ -1,0 +1,51 @@
+**1. Which of the following correctly encloses a string in Python? (Easy)**  
+A) `hi = hello there`  
+B) `hi = "hello there"`  
+C) `hi = (hello there)`  
+D) `hi = {hello there}`  
+**Answer:** B) `hi = "hello there"`  
+
+---
+
+**2. What does the `input("")` function return by default in Python? (Easy)**  
+A) Integer  
+B) Float  
+C) String  
+D) Boolean  
+**Answer:** C) String  
+
+---
+
+**3. Which operator checks for equality between two variables in Python? (Medium)**  
+A) `=`  
+B) `==`  
+C) `!=`  
+D) `:=`  
+**Answer:** B) `==`  
+
+---
+
+**4. In a *while* loop, if the user inputs "right" three times consecutively in the Lost Forest example, how many times does the loop execute? (Medium)**  
+A) 2  
+B) 3  
+C) 4  
+D) 1  
+**Answer:** B) 3  
+
+---
+
+**5. What is the output of the following code? (Hard)**  
+```python
+mysum = 0  
+for i in range(5, 11, 2):  
+    mysum += i  
+    if mysum == 5:  
+        break  
+    mysum += 1  
+print(mysum)  
+```  
+A) 5  
+B) 7  
+C) 8  
+D) 9  
+**Answer:** A) 5

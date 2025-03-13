@@ -1,0 +1,74 @@
+Here are 5 multiple-choice questions based on the lecture text, with varying difficulty levels:
+
+---
+
+**1. Which symbols are used to enclose strings in Python?**  
+**(Easy)**  
+A) Parentheses `()`  
+B) Brackets `[]`  
+C) Quotation marks `" "` or single quotes `' '`  
+D) Curly braces `{}`  
+**Answer:** C) Quotation marks `" "` or single quotes `' '`  
+
+---
+
+**2. What does the following code output if the user enters `3` when prompted?**  
+**(Medium)**  
+```python  
+num = int(input("Type a number... "))  
+print(5 * num)  
+```  
+A) `33333`  
+B) `15`  
+C) `Type a number... 15`  
+D) `55555`  
+**Answer:** B) `15`  
+
+---
+
+**3. Using the truth table for `A and B`, what is the result if `A` is `False` and `B` is `True`?**  
+**(Medium)**  
+A) `True`  
+B) `False`  
+C) `Error`  
+D) `None`  
+**Answer:** B) `False`  
+
+---
+
+**4. What is the final value of `mysum` after this loop executes?**  
+**(Hard)**  
+```python  
+mysum = 0  
+for i in range(5, 11, 2):  
+    mysum += i  
+    if mysum == 5:  
+        break  
+    mysum += 1  
+print(mysum)  
+```  
+A) 5  
+B) 7  
+C) 15  
+D) 16  
+**Answer:** A) 5  
+
+---
+
+**5. How many times will the `input()` function execute if the user types `"right"` three times and then `"left"` in the Lost Forest example?**  
+**(Hard)**  
+```python  
+n = input("You're in the Lost Forest. Go left or right? ")  
+while n == "right":  
+    n = input("You're in the Lost Forest. Go left or right? ")  
+print("You got out!")  
+```  
+A) 1  
+B) 3  
+C) 4  
+D) 5  
+**Answer:** C) 4  
+
+--- 
+
+**Explanation for Q5:** The `input` runs once before the loop. The user enters `"right"` three times (triggering 3 more inputs inside the loop), then enters `"left"` on the fourth iteration, exiting the loop. Total inputs: 4.

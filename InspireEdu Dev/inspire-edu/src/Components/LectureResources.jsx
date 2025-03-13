@@ -42,12 +42,41 @@ export default function LectureResources() {
                 <div className="lecture-resources-grid">
                     {resources.map((resource, index) => (
                         <div key={index} className="resource-group">
-                            <a href={`http://localhost:5000${resource.filePath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
-                                📄 Lecture PDF
+                            {/* Lecture PDF Card */}
+                            <a
+                                href={`http://localhost:5000${resource.filePath}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="resource-card"
+                            >
+                                <h3>
+                                Lecture PDF
+                                📄</h3>
                             </a>
+
+                            {/* Lecture Summary Card */}
                             {resource.summaryPath && (
-                                <a href={`http://localhost:5000${resource.summaryPath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
-                                    📑 Lecture Summary
+                                <a
+                                    href={`http://localhost:5000${resource.summaryPath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="resource-card"
+                                >
+                                    <h3>Lecture Summary
+                                    📑</h3>
+                                </a>
+                            )}
+
+                            {/* Lecture Quiz Card */}
+                            {resource.quizPath && (
+                                <a
+                                    href={`http://localhost:5000${resource.quizPath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="resource-card"
+                                >
+                                    <h3>Lecture Quiz
+                                    📝</h3>
                                 </a>
                             )}
                         </div>

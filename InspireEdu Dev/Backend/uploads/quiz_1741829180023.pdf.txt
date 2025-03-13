@@ -1,0 +1,56 @@
+**1. (Easy)**  
+What is the result of the Python expression `"hi" + " " + "name" * 3`?  
+A) `"hi name name name"`  
+B) `"hi namenamename"`  
+C) `"hinamename"`  
+D) `"hi name3"`  
+**Answer:** B) `"hi namenamename"`  
+
+---
+
+**2. (Medium)**  
+If a user inputs the value `3` when prompted by `num = int(input("Type a number... "))`, what will `print(5 * num)` output?  
+A) `15`  
+B) `33333`  
+C) `"33333"`  
+D) `TypeError`  
+**Answer:** A) `15`  
+
+---
+
+**3. (Hard)**  
+Consider the code:  
+```python  
+mysum = 0  
+for i in range(5, 11, 2):  
+    mysum += i  
+    if mysum == 5:  
+        break  
+print(mysum)  
+```  
+What is the final value of `mysum`?  
+A) `5`  
+B) `21`  
+C) `7`  
+D) `16`  
+**Answer:** A) `5`  
+
+---
+
+**4. (Easy)**  
+Which operator is used to test equality in Python?  
+A) `=`  
+B) `==`  
+C) `!=`  
+D) `is`  
+**Answer:** B) `==`  
+
+---
+
+**5. (Medium)**  
+What sequence does `range(5, 11, 2)` generate?  
+A) `[5, 7, 9, 11]`  
+B) `[5, 7, 9]`  
+C) `[5, 6, 7, 8, 9, 10]`  
+D) `[5, 6, 7, 8, 9]`  
+**Answer:** B) `[5, 7, 9]`
