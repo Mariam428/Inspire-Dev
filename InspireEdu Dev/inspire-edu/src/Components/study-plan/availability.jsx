@@ -24,7 +24,8 @@ export default function Availability() {
 
   const handleSubmit = async () => {
     console.log("Selected Availability:", availability);
-
+    
+   
     const formattedSummary = Object.entries(availability)
       .filter(([_, hours]) => hours > 0)
       .map(([day, hours]) => `${day}: ${hours} hour${hours > 1 ? "s" : ""}`)
@@ -46,16 +47,18 @@ export default function Availability() {
           },
         }),
       });
-
       const data = await response.json();
       console.log("✅ Backend Response Message:", data.message);
       console.log("📅 Schedule Data:", data.scheduleData);
 
       setScheduleData(data.scheduleData); // ✅ Save to display below
+       
+
+     
 
     } catch (error) {
       console.error("❌ Error reaching backend:", error);
-      // You can add UI message state if needed
+     
     }
   };
 
@@ -90,29 +93,6 @@ export default function Availability() {
         Save Availability
       </button>
 
-      {/* ✅ Display Schedule from Backend */}
-      {scheduleData && (
-        <div className="schedule-output">
-          <h2>Your Generated Study Plan</h2>
-          {Object.entries(scheduleData).map(([day, tasks]) => (
-            <div key={day} className="schedule-day">
-              <h3>{day}</h3>
-              <ul>
-                {tasks.map((task, idx) => (
-                  <li key={idx}>
-                    <strong>{task.subject}</strong> - {task.hours} hour{task.hours > 1 ? "s" : ""}
-                    <ul>
-                      {task.details.map((detail, i) => (
-                        <li key={i}>{detail}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

@@ -131,15 +131,23 @@ app.post("/generate", (req, res) => {
     console.log("🐍 Python script executed successfully");
     console.log("📤 Python output:", stdout);
 
+    // ✅ Try to parse the Python stdout
+    let parsedOutput;
     try {
-      const scheduleData = JSON.parse(stdout); // Parse Python script output
-      res.json({ message: "Plan generated successfully ✅", scheduleData });
-    } catch (parseErr) {
-      console.error("❌ Failed to parse Python output:", parseErr);
-      res.status(500).json({ error: "Invalid output from Python script" });
+      parsedOutput = JSON.parse(stdout.trim());
+    } catch (e) {
+      console.error("❌ Failed to parse Python output as JSON:", e);
+      return res.status(500).json({ error: "Invalid output from Python script" });
     }
+
+    // ✅ Send structured JSON response
+    res.json({
+      message: "Study plan generated successfully!",
+      scheduleData: parsedOutput,
+    });
   });
 });
+
 
 // 🔹 Configure Multer for File Uploads
 const storage = multer.diskStorage({
