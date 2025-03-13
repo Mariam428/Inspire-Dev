@@ -1,0 +1,51 @@
+**1. (Easy)** Which of the following is the correct way to enclose a string in Python?  
+A. `{hello}`  
+B. `"hello"`  
+C. `(hello)`  
+D. `[hello]`  
+**Answer:** B. `"hello"`  
+
+---
+
+**2. (Easy)** What data type does the `input()` function return by default?  
+A. `int`  
+B. `float`  
+C. `str`  
+D. `bool`  
+**Answer:** C. `str`  
+
+---
+
+**3. (Medium)** What is the value of `silly` after the following code executes?  
+```
+hi = "hello"
+name = "ana"
+silly = hi + " " + name * 3
+```  
+A. `hello ana ana ana`  
+B. `hello ana 3`  
+C. `helloanaanaana`  
+D. `hello anaanaana`  
+**Answer:** D. `hello anaanaana`  
+
+---
+
+**4. (Medium)** Given the code:  
+```
+derive = True  
+drink = False  
+both = drink and derive  
+```  
+What is the value of `both`?  
+A. `True`  
+B. `False`  
+**Answer:** B. `False`  
+
+---
+
+**5. (Hard)** In the Lost Forest loop example, what happens if the user enters "right" every time they are prompted?  
+A. The loop terminates immediately.  
+B. The loop runs exactly three times.  
+C. The loop executes indefinitely.  
+D. The loop throws an error.  
+**Answer:** C. The loop executes indefinitely.

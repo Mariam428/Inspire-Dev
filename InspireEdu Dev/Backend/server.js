@@ -83,6 +83,8 @@ const ResourceSchema = new mongoose.Schema({
     lectureNumber: String,
     filePath: String,
     summaryPath: String, // Add this field for storing the summary file path
+    quizPath: String, // Add this field for storing the quiz file path
+
 });
 const Resource = mongoose.model("Resource", ResourceSchema);
 
@@ -93,17 +95,12 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 //
 //
 //
+// const express = require("express");
 
-// 🔹 Course Schema
-const CourseSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  color: { type: String, required: true },
-  textColor: { type: String, required: true },
-  borderColor: { type: String, required: true }
-});
-
-const Course = mongoose.model("Course", CourseSchema);
-module.exports = Course;
+// const cors = require("cors");
+// const fs = require("fs");
+// const { exec } = require("child_process");
+// const path = require("path");
 
 app.use(cors());
 app.use(express.json());
@@ -255,46 +252,67 @@ app.get("/courses", async (req, res) => {
 
 // 🔹 Route to Handle Resource Upload and Summarization
 app.post("/upload-resource", upload.single("file"), async (req, res) => {
-    try {
-        let { subject, lectureNumber } = req.body;
+  try {
+      let { subject, lectureNumber } = req.body;
 
-        if (!req.file) {
-            return res.status(400).json({ error: "No file uploaded" });
-        }
+      if (!req.file) {
+          return res.status(400).json({ error: "No file uploaded" });
+      }
 
-        // Normalize subject and lecture number
-        subject = subject.trim().toUpperCase();
-        lectureNumber = !isNaN(lectureNumber)
-            ? `LECTURE ${lectureNumber}`
-            : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
+      // Normalize subject and lecture number
+      subject = subject.trim().toUpperCase();
+      lectureNumber = !isNaN(lectureNumber)
+          ? `LECTURE ${lectureNumber}`
+          : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
 
-        const filePath = `/uploads/${req.file.filename}`;
+      const filePath = `/uploads/${req.file.filename}`;
 
-        // Save the resource to the database
-        const newResource = new Resource({ subject, lectureNumber, filePath });
-        await newResource.save();
+      // Save the resource to the database
+      const newResource = new Resource({ subject, lectureNumber, filePath });
+      await newResource.save();
 
-        // Generate summary using the Python script
-        const summaryPath = `uploads/summary_${req.file.filename}.pdf`;
-        exec(
-            `python summarize.py ${req.file.path} ${summaryPath}`,
-            async (error, stdout, stderr) => {
-                if (error) {
-                    console.error("Error generating summary:", error);
-                    return res.status(500).json({ error: "Failed to generate summary" });
+      // Generate summary using the Python script
+      const summaryPath = `uploads/summary_${req.file.filename}.pdf`;
+      exec(
+          `python summarize.py ${req.file.path} ${summaryPath}`,
+          async (error, stdout, stderr) => {
+              if (error) {
+                  console.error("Error generating summary:", error);
+                  return res.status(500).json({ error: "Failed to generate summary" });
+              }
+
+              // Update the resource with the summary path
+              newResource.summaryPath = `/${summaryPath}`;
+              await newResource.save();
+
+              // Generate quiz using the Python script
+            const quizPath = `uploads/quiz_${req.file.filename}.txt`;
+            exec(
+                `python generate_quiz.py ${req.file.path} ${quizPath}`,
+                async (quizError, quizStdout, quizStderr) => {
+                    if (quizError) {
+                        console.error("Error generating quiz:", quizError);
+                        return res.status(500).json({ error: "Failed to generate quiz" });
+                    }
+
+                    // Update the resource with the quiz path
+                    newResource.quizPath = `/${quizPath}`; // Save the quiz path
+                    await newResource.save(); // Save the updated resource to the database
+
+                    res.json({
+                        message: "File uploaded, summary, and quiz generated successfully!",
+                        filePath,
+                        summaryPath,
+                        quizPath,
+                    });
                 }
-
-                // Update the resource with the summary path
-                newResource.summaryPath = `/${summaryPath}`;
-                await newResource.save();
-
-                res.json({ message: "File uploaded and summary generated successfully!", filePath, summaryPath });
-            }
-        );
-    } catch (error) {
-        console.error("Upload error:", error);
-        res.status(500).json({ error: "Failed to upload file" });
-    }
+            );
+          }
+      );
+  } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ error: "Failed to upload file" });
+  }
 });
 
 // 🔹 Route to Fetch Resources for a Lecture
