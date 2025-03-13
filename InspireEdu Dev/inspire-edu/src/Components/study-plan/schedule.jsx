@@ -1,26 +1,26 @@
-import React from "react";
-import "./schedule.css";
+import React, { useState } from "react";
+import "./schedule.css"; // Ensure styles are in place
 
-const allDays = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+// Temporary mock data (replace this with backend data)
+const sched = JSON.parse(localStorage.getItem("scheduleData"));
+
+// Log the temp variable
+console.log("📦 sched Schedule from Local Storage:", sched);
+
+const scheduleData = sched;
+
+// Days of the week (ensures all 7 days are included)
+const allDays = ["Saturday", "Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 const Schedule = () => {
-  // Safely parse localStorage data
-  const storedData = localStorage.getItem("scheduleData");
-  const scheduleData = storedData ? JSON.parse(storedData) : null;
-  console.log(storedData)
+  const [notes, setNotes] = useState("");
+ 
 
-  if (!scheduleData) {
-    return (
-      <div className="schedule-container">
-        <h1 className="page-header">Weekly<br />Planner</h1>
-        <p>No schedule found. Please generate your plan first.</p>
-      </div>
-    );
-  }
 
   return (
+    
     <div className="schedule-container">
-      <h1 className="page-header">Weekly<br />Planner</h1>
+       <h1 className="page-header">Weekly<br />Planner</h1>
       {allDays.map((day) => (
         <div key={day} className="day-card-sched">
           <h2 className="day">{day}</h2>
@@ -39,8 +39,9 @@ const Schedule = () => {
             <p>Day unavailable</p>
           )}
         </div>
-      ))}
+      ))}   
     </div>
+    
   );
 };
 

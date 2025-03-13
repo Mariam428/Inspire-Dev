@@ -50,9 +50,15 @@ export default function Availability() {
       const data = await response.json();
       console.log("✅ Backend Response Message:", data.message);
       console.log("📅 Schedule Data:", data.scheduleData);
+      localStorage.setItem("scheduleData", JSON.stringify(data.scheduleData));
 
-      setScheduleData(data.scheduleData); // ✅ Save to display below
-       
+     // Retrieve into temp variable
+      const temp = JSON.parse(localStorage.getItem("scheduleData"));
+
+     // Log the temp variable
+     console.log("📦 Temp Schedule from Local Storage:", temp);
+
+      
 
      
 

@@ -14,7 +14,7 @@ try:
                 "subject": "Neural Networks",
                 "hours": 2.0,
                 "details": [
-                    "Study lecture: 6 (PDF)",
+                    "python script",
                     "Rewatch lecture: 5 & take notes"
                 ]
             }
