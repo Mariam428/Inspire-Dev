@@ -116,8 +116,8 @@ app.post("/generate", (req, res) => {
   console.log("📥 Received grades:", grades);
 
   // Save availability and grades as temp JSON files
-  fs.writeFileSync("temp_availability.json", JSON.stringify(availability));
-  fs.writeFileSync("temp_grades.json", JSON.stringify(grades));
+  fs.writeFileSync("temp_availability.json", JSON.stringify(availability)); //from front
+  fs.writeFileSync("temp_grades.json", JSON.stringify(grades)); //will be modified to fetch from db
 
   const pythonScriptPath = path.join(__dirname, "plan_v0.py");
 

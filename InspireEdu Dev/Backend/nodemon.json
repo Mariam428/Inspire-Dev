@@ -1,0 +1,6 @@
+{
+    "restartDelay": 500,
+    "ignore": ["*.json", "*.txt"]  
+  }
+  
+  
