@@ -8,6 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
+const pdf = require("pdf-parse");
 
 const app = express();
 app.use(express.json());
@@ -329,6 +330,50 @@ app.get("/lectures/:subject", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch lectures" });
     }
 });
+
+const { ConnectionPoolClosedEvent } = require("mongodb");
+// 🔹 Route to Fetch Quiz Questions from PDF
+app.get("/quiz-questions", async (req, res) => {
+  const pdfPath = path.join(__dirname, "MCQ.pdf");
+
+  try {
+      const dataBuffer = fs.readFileSync(pdfPath);
+      const data = await pdf(dataBuffer);
+
+      const questions = [];
+      const lines = data.text.split("\n");
+
+      let currentQuestion = null;
+
+      lines.forEach(line => {
+          if (line.match(/^\d+\./)) {
+              if (currentQuestion) {
+                  questions.push(currentQuestion);
+              }
+              currentQuestion = {
+                  question: line.trim(),
+                  options: [],
+                  correctAnswer: ""
+              };
+          } else if (line.match(/^[a-d]\./)) {
+              currentQuestion.options.push(line.trim());
+          } else if (line.startsWith("Correct Answer:")) {
+              currentQuestion.correctAnswer = line.split(":")[1].trim();
+          }
+      });
+
+      if (currentQuestion) {
+          questions.push(currentQuestion);
+      }
+
+      res.json(questions);
+  } catch (error) {
+      console.error("Error reading PDF:", error);
+      res.status(500).json({ error: "Failed to read quiz questions" });
+  }
+})
+
+
 
 // 🔹 Start Server
 const PORT = process.env.PORT || 5000;
