@@ -492,18 +492,26 @@ app.post("/submit-quiz", async (req, res) => {
           }
 
           // Store the correct answer
-          correctAnswers[questionNumber] = {
+          correctAnswers[questionNumber-1] = {
               question: questionText,
               options: options,
               correctAnswer: correctAnswer,
           };
+
       });
 
       // Compare user answers with correct answers
       let score = 0;
       Object.keys(userAnswers).forEach((questionIndex) => {
           const userAnswer = userAnswers[questionIndex];
-          const correctAnswerData = correctAnswers[questionIndex + 1]; // Question numbers start from 1
+          const correctAnswerData = correctAnswers[questionIndex]; // Question numbers start from 1
+          console.log("question index:");
+          console.log(questionIndex);
+          console.log("user answer:");
+          console.log(userAnswer);
+          console.log("correct answer:");
+          console.log(correctAnswerData.correctAnswer);
+
 
           if (correctAnswerData && userAnswer === correctAnswerData.correctAnswer) {
               score++;
