@@ -2,6 +2,8 @@ import re
 import sys
 import PyPDF2
 import requests
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, "rb") as file:
@@ -59,6 +61,31 @@ def generate_mcqs(api_key, text, num_questions=5):
         print(f"Failed to Parse JSON: {e}")
         return []
 
+def save_quiz_to_pdf(quiz_path, mcqs):
+    # Create a PDF file
+    c = canvas.Canvas(quiz_path, pagesize=letter)
+    width, height = letter  # Get the dimensions of the page
+
+    # Set font and size
+    c.setFont("Helvetica", 12)
+
+    # Split the MCQs into lines and write to PDF
+    lines = mcqs.split("\n")
+    y_position = height - 50  # Start 50 units from the top
+
+    for line in lines:
+        if y_position < 50:  # Add a new page if we run out of space
+            c.showPage()
+            y_position = height - 50
+            c.setFont("Helvetica", 12)
+
+        c.drawString(50, y_position, line)
+        y_position -= 15  # Move down by 15 units for the next line
+
+    # Save the PDF
+    c.save()
+    print(f"Quiz saved to {quiz_path}")
+
 def main(pdf_path, quiz_path, api_key, num_questions=5):
     # Step 1: Extract text from PDF
     pdf_text = extract_text_from_pdf(pdf_path)
@@ -69,11 +96,9 @@ def main(pdf_path, quiz_path, api_key, num_questions=5):
     # Step 3: Generate MCQs
     mcqs = generate_mcqs(api_key, cleaned_text, num_questions)
 
-    # Step 4: Save MCQs to a file
+    # Step 4: Save MCQs to a PDF file
     if mcqs:
-        with open(quiz_path, "w") as quiz_file:
-            quiz_file.write(mcqs)
-        print(f"Quiz saved to {quiz_path}")
+        save_quiz_to_pdf(quiz_path, mcqs)
     else:
         print("No MCQs generated.")
 

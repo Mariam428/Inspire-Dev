@@ -8,6 +8,11 @@ export default function LectureResources() {
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [quizQuestions, setQuizQuestions] = useState([]);
+    const [userAnswers, setUserAnswers] = useState({});
+    const [quizSubmitted, setQuizSubmitted] = useState(false);
+    const [score, setScore] = useState(0);
+    const [showQuizPopup, setShowQuizPopup] = useState(false);
 
     useEffect(() => {
         const fetchResources = async () => {
@@ -30,6 +35,51 @@ export default function LectureResources() {
         fetchResources();
     }, [subjectName, lectureName]);
 
+    const handleQuizButtonClick = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/quiz-questions", {
+                params: {
+                    subject: subjectName,
+                    lectureNumber: lectureName,
+                },
+            });
+            setQuizQuestions(response.data);
+            setShowQuizPopup(true); // Show the quiz popup
+        } catch (error) {
+            console.error("Error fetching quiz questions", error);
+        }
+    };
+
+    const handleAnswerChange = (questionIndex, answer) => {
+        setUserAnswers({ ...userAnswers, [questionIndex]: answer });
+    };
+
+    const handleSubmitQuiz = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post("http://localhost:5000/submit-quiz", {
+                userAnswers: Object.values(userAnswers), // Convert answers to an array
+                subject: subjectName, // Send subject name
+                lectureNumber: lectureName, // Send lecture number
+            });
+
+            // Set quiz results
+            setScore(response.data.score);
+            setQuizSubmitted(true);
+        } catch (error) {
+            console.error("Error submitting quiz:", error);
+            alert("Failed to submit quiz. Please try again.");
+        }
+    };
+
+    const closeQuizPopup = () => {
+        setShowQuizPopup(false);
+        setQuizSubmitted(false);
+        setUserAnswers({});
+        setScore(0);
+    };
+
     return (
         <div className="lecture-content-container">
             <h1 className="lecture-title">{lectureName}</h1>
@@ -42,48 +92,62 @@ export default function LectureResources() {
                 <div className="lecture-resources-grid">
                     {resources.map((resource, index) => (
                         <div key={index} className="resource-group">
-                            {/* Lecture PDF Card */}
-                            <a
-                                href={`http://localhost:5000${resource.filePath}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="resource-card"
-                            >
-                                <h3>
-                                Lecture PDF
-                                📄</h3>
+                            <a href={`http://localhost:5000${resource.filePath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
+                                📄 Lecture PDF
                             </a>
-
-                            {/* Lecture Summary Card */}
                             {resource.summaryPath && (
-                                <a
-                                    href={`http://localhost:5000${resource.summaryPath}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="resource-card"
-                                >
-                                    <h3>Lecture Summary
-                                    📑</h3>
-                                </a>
-                            )}
-
-                            {/* Lecture Quiz Card */}
-                            {resource.quizPath && (
-                                <a
-                                    href={`http://localhost:5000${resource.quizPath}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="resource-card"
-                                >
-                                    <h3>Lecture Quiz
-                                    📝</h3>
+                                <a href={`http://localhost:5000${resource.summaryPath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
+                                    📑 Lecture Summary
                                 </a>
                             )}
                         </div>
                     ))}
+                    <button onClick={handleQuizButtonClick} className="quiz-button">
+                        Start Quiz
+                    </button>
                 </div>
             ) : (
                 <p>No resources uploaded for this lecture.</p>
+            )}
+
+            {showQuizPopup && (
+                <div className="quiz-popup-overlay">
+                    <div className="quiz-popup">
+                        <h2>Quiz</h2>
+                        <form onSubmit={handleSubmitQuiz}>
+                            <div className="quiz-questions-container">
+                                {quizQuestions.map((question, index) => (
+                                    <div key={index} className="quiz-question">
+                                        <p>{question.question}</p>
+                                        {question.options.map((option, i) => (
+                                            <label key={i}>
+                                                <input
+                                                    type="radio"
+                                                    name={`question-${index}`}
+                                                    value={option}
+                                                    onChange={() => handleAnswerChange(index, option)}
+                                                    disabled={quizSubmitted}
+                                                />
+                                                {option}
+                                            </label>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                            <button type="submit" className="submit-quiz-button" disabled={quizSubmitted}>
+                                Submit
+                            </button>
+                        </form>
+                        {quizSubmitted && (
+                            <div className="quiz-result">
+                                <p>Your score: {score} / {quizQuestions.length}</p>
+                                <button onClick={closeQuizPopup} className="close-quiz-button">
+                                    Close
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );

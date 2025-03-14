@@ -8,6 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
+const pdfParse = require("pdf-parse");
 
 const app = express();
 app.use(express.json());
@@ -101,7 +102,16 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 // const fs = require("fs");
 // const { exec } = require("child_process");
 // const path = require("path");
+// 🔹 Course Schema
+const CourseSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  color: { type: String, required: true },
+  textColor: { type: String, required: true },
+  borderColor: { type: String, required: true }
+});
 
+const Course = mongoose.model("Course", CourseSchema);
+module.exports = Course;
 app.use(cors());
 app.use(express.json());
 
@@ -286,7 +296,7 @@ app.post("/upload-resource", upload.single("file"), async (req, res) => {
               await newResource.save();
 
               // Generate quiz using the Python script
-            const quizPath = `uploads/quiz_${req.file.filename}.txt`;
+            const quizPath = `uploads/quiz_${req.file.filename}.pdf`;
             exec(
                 `python generate_quiz.py ${req.file.path} ${quizPath}`,
                 async (quizError, quizStdout, quizStderr) => {
@@ -348,6 +358,164 @@ app.get("/lectures/:subject", async (req, res) => {
     }
 });
 
+
+const { ConnectionPoolClosedEvent } = require("mongodb");
+// 🔹 Route to Fetch Quiz Questions from PDF
+const { PdfReader } = require("pdfreader");
+
+app.get("/quiz-questions", async (req, res) => {
+  try {
+      const { subject, lectureNumber } = req.query;
+
+      if (!subject || !lectureNumber) {
+          return res.status(400).json({ error: "Subject and lecture number are required" });
+      }
+
+      // Normalize subject and lecture number
+      const formattedSubject = subject.trim().toUpperCase();
+      const formattedLecture = !isNaN(lectureNumber)
+          ? `LECTURE ${lectureNumber}`
+          : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
+
+      // Fetch the resource to get the quiz path
+      const resource = await Resource.findOne({ subject: formattedSubject, lectureNumber: formattedLecture });
+      if (!resource || !resource.quizPath) {
+          return res.status(404).json({ error: "Quiz not found for this lecture" });
+      }
+
+      // Read and parse the PDF
+      const quizPath = path.join(__dirname, resource.quizPath);
+      console.log("Quiz Path:", quizPath); // Log the quiz path
+
+      if (!fs.existsSync(quizPath)) {
+          console.error("Quiz file does not exist:", quizPath);
+          return res.status(404).json({ error: "Quiz file not found" });
+      }
+
+      const dataBuffer = fs.readFileSync(quizPath);
+      const pdfData = await pdfParse(dataBuffer);
+      const pdfText = pdfData.text;
+
+      // Extract questions and options
+      const questionBlocks = pdfText.split("---"); // Split by the separator
+      const questions = [];
+
+      questionBlocks.forEach((block) => {
+          const lines = block.split("\n").map((line) => line.trim()).filter((line) => line !== "");
+          if (lines.length === 0) return;
+
+          // Extract question number and text
+          const questionLine = lines[0];
+          const questionNumberMatch = questionLine.match(/\*\*(\d+)\./);
+          if (!questionNumberMatch) return;
+
+          const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
+
+          // Extract options
+          const options = [];
+          let correctAnswer = null;
+
+          for (let i = 1; i < lines.length; i++) {
+              if (lines[i].match(/^[A-D]\)/)) { // Match options like "A)", "B)", etc.
+                  options.push(lines[i]);
+              } else if (lines[i].startsWith("**Answer:**")) {
+                  // Extract the correct answer
+                  correctAnswer = lines[i].replace("**Answer:**", "").trim();
+              }
+          }
+
+          // Add the question to the list
+          questions.push({
+              question: questionText,
+              options: options,
+              correctAnswer: correctAnswer, // Include the correct answer
+          });
+      });
+
+      res.json(questions);
+  } catch (error) {
+      console.error("Error fetching quiz questions:", error);
+      res.status(500).json({ error: "Failed to fetch quiz questions" });
+  }
+});
+
+app.post("/submit-quiz", async (req, res) => {
+  try {
+      const { userAnswers, subject, lectureNumber } = req.body;
+
+      // Normalize subject and lecture number
+      const formattedSubject = subject.trim().toUpperCase();
+      const formattedLecture = !isNaN(lectureNumber)
+          ? `LECTURE ${lectureNumber}`
+          : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
+
+      // Fetch the resource to get the quiz path
+      const resource = await Resource.findOne({ subject: formattedSubject, lectureNumber: formattedLecture });
+      if (!resource || !resource.quizPath) {
+          return res.status(404).json({ error: "Quiz not found for this lecture" });
+      }
+
+      const quizPath = path.join(__dirname, resource.quizPath);
+
+      // Read and parse the PDF
+      const dataBuffer = fs.readFileSync(quizPath);
+      const pdfData = await pdfParse(dataBuffer);
+      const pdfText = pdfData.text;
+
+      // Extract questions and correct answers
+      const questionBlocks = pdfText.split("---"); // Split by the separator
+      let correctAnswers = {};
+
+      questionBlocks.forEach((block) => {
+          const lines = block.split("\n").map((line) => line.trim()).filter((line) => line !== "");
+          if (lines.length === 0) return;
+
+          // Extract question number and text
+          const questionLine = lines[0];
+          const questionNumberMatch = questionLine.match(/\*\*(\d+)\./);
+          if (!questionNumberMatch) return;
+
+          const questionNumber = questionNumberMatch[1];
+          const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
+
+          // Extract options and correct answer
+          const options = [];
+          let correctAnswer = null;
+
+          for (let i = 1; i < lines.length; i++) {
+              if (lines[i].match(/^[A-D]\)/)) { // Match options like "A)", "B)", etc.
+                  options.push(lines[i]);
+              } else if (lines[i].startsWith("**Answer:**")) {
+                  // Extract the correct answer
+                  correctAnswer = lines[i].replace("**Answer:**", "").trim();
+              }
+          }
+
+          // Store the correct answer
+          correctAnswers[questionNumber] = {
+              question: questionText,
+              options: options,
+              correctAnswer: correctAnswer,
+          };
+      });
+
+      // Compare user answers with correct answers
+      let score = 0;
+      Object.keys(userAnswers).forEach((questionIndex) => {
+          const userAnswer = userAnswers[questionIndex];
+          const correctAnswerData = correctAnswers[questionIndex + 1]; // Question numbers start from 1
+
+          if (correctAnswerData && userAnswer === correctAnswerData.correctAnswer) {
+              score++;
+          }
+      });
+
+      res.json({ score, total: Object.keys(correctAnswers).length });
+  } catch (error) {
+      console.error("Error processing quiz:", error);
+      res.status(500).json({ error: "Failed to process the quiz" });
+  }
+});
 // 🔹 Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

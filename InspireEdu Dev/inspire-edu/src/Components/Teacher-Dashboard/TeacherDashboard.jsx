@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; 
+import axios from "axios";
+import { useEffect } from "react";
 import "./TeacherDashboard.css";
 
 const TeacherDashboard = () => {
@@ -44,6 +45,22 @@ const TeacherDashboard = () => {
     }
   };
 
+  const [courses, setCourses] = useState([]); // Store available courses
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/courses");
+        setCourses(response.data); // Store courses
+      } catch (error) {
+        console.error("Failed to fetch courses", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -84,8 +101,14 @@ const TeacherDashboard = () => {
           <div className="popup-content">
             <h3>Upload Resource</h3>
             <form onSubmit={handleFileUpload}>
-              <label>Subject:</label>
-              <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} required />
+              <label>Course:</label>
+              <select value={subject} onChange={(e) => setSubject(e.target.value)} required>
+                <option value="">Select a course</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course.name}>{course.name}</option>
+                ))}
+              </select>
+
 
               <label>Lecture Number:</label>
               <input type="text" value={lectureNumber} onChange={(e) => setLectureNumber(e.target.value)} required />

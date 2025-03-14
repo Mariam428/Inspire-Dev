@@ -1,0 +1,52 @@
+**1. (Easy)**  
+According to the Oxford Dictionary definition, what is the Internet of Things (IoT)?  
+A. Direct communication between machines without human interaction  
+B. A network of everyday objects connected via the internet to share data  
+C. A system using AI to automate household appliances  
+D. Wireless communication protocols for industrial devices  
+
+**Answer:** B  
+
+---
+
+**2. (Medium)**  
+Which IoT application domain includes activities like "control of home security" and "intelligent heating systems"?  
+A. Environmental Monitoring  
+B. Healthcare  
+C. Transportation  
+D. Smart Household Management  
+
+**Answer:** D  
+
+---
+
+**3. (Hard)**  
+Which IoT deployment level corresponds to a system where a single node performs sensing, stores data, conducts analysis, and hosts the application locally?  
+A. Level 2 (Device and Local Analysis)  
+B. Level 5 (Coordinator Node)  
+C. Level 1 (Device Level)  
+D. Level 3 (Cloud Analysis and Applications)  
+
+**Answer:** C  
+
+---
+
+**4. (Easy)**  
+The "4S Rule" for IoT systems includes all of the following *except*:  
+A. Simple  
+B. Secure  
+C. Safety  
+D. Scalable  
+
+**Answer:** C  
+
+---
+
+**5. (Hard)**  
+Which component is *not* typically part of IoT infrastructure, as described in the text?  
+A. Sensors (real or virtual)  
+B. Cloud computing for data storage  
+C. Human operators for daily device configuration  
+D. Communication protocols like ZigBee and Bluetooth  
+
+**Answer:** C
