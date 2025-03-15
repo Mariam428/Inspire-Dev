@@ -22,11 +22,13 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 // 🔹 User Schema
 const UserSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ["student", "educator"], required: true }
+  name: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ["student", "educator"], required: true },
+  registrationDate: { type: Date, default: Date.now }
 });
+
 const User = mongoose.model("User", UserSchema);
 //enrollement schema
 const CourseEnrollmentSchema = new mongoose.Schema({
@@ -182,17 +184,24 @@ app.post("/register", async (req, res) => {
 
 // 🔹 Login API
 app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ error: "Invalid email or password" });
-    }
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Invalid email or password" });
+  }
 
-    // Generate JWT Token
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  // Generate JWT Token
+  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ token, role: user.role });
+  // Include the registration date with the response
+  res.json({ 
+      token, 
+      role: user.role,
+      registrationDate: user.registrationDate,
+      name: user.name,
+      email: user.email 
+  });
 });
 
 // 🔹 API to Add a New Course

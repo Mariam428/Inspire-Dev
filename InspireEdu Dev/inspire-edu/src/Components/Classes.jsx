@@ -5,7 +5,6 @@ import "./Classes.css";
 export default function Classes() {
   const navigate = useNavigate();
   const userRole = localStorage.getItem("role");
-
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -18,22 +17,38 @@ export default function Classes() {
           const response = await fetch("http://localhost:5000/courses");
           const data = await response.json();
           if (response.ok) {
-            coursesData = data.map(course => course.name); // Assuming course names are stored under 'name'
+            coursesData = data.map((course) => course.name); // Assuming course names are under 'name'
           }
         } else {
           // Fetch only enrolled courses from localStorage
-          coursesData = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+          const rawCourses = localStorage.getItem("enrolledCourses");
+          console.log("🔍 Raw localStorage value:", rawCourses);
+
+          try {
+            coursesData = JSON.parse(rawCourses) || [];
+          } catch (error) {
+            console.error("❌ Failed to parse enrolledCourses:", error);
+          }
         }
 
-        console.log("✅ Retrieved courses:", coursesData); // Debug log
+        console.log("✅ Retrieved courses:", coursesData);
         setCourses(coursesData);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error("❌ Error fetching courses:", error);
       }
     };
 
     fetchCourses();
   }, [userRole]);
+
+  // Handle navigation for "Add" or "Enroll"
+  const handleNavigation = () => {
+    if (userRole === "educator") {
+      navigate("/Add-Course"); // Navigate to add courses page
+    } else {
+      navigate("/Register-Course"); // Navigate to enrollment page
+    }
+  };
 
   return (
     <div className="classes-container">
@@ -42,22 +57,34 @@ export default function Classes() {
       {courses.length === 0 ? (
         <p className="text-center text-gray-600 mt-6 text-lg">
           Nothing to show,{" "}
-          <span className="font-semibold">
+          <span
+            className="font-semibold text-blue-600 cursor-pointer hover:underline"
+            onClick={handleNavigation}
+          >
             {userRole === "educator" ? "Add" : "Enroll"}
           </span>{" "}
           to view Course Videos.
         </p>
       ) : (
         <div className="classes-grid">
-          {courses.map((course, index) => (
-            <button
-              key={index}
-              className="class-card bg-blue-100 border border-blue-300 hover:bg-blue-200 transition-all"
-              onClick={() => navigate(`/videos/${course.replace(/\s+/g, "_")}`)}
-            >
-              <h2 className="class-title text-blue-700">{course}</h2>
-            </button>
-          ))}
+          {courses.map((course, index) => {
+            const courseName =
+              typeof course === "string"
+                ? course
+                : course?.courseId || "Unnamed Course";
+
+            return (
+              <button
+                key={index}
+                className="class-card bg-blue-100 border border-blue-300 hover:bg-blue-200 transition-all"
+                onClick={() =>
+                  navigate(`/videos/${courseName.replace(/\s+/g, "_")}`)
+                }
+              >
+                <h2 className="class-title text-blue-700">{courseName}</h2>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

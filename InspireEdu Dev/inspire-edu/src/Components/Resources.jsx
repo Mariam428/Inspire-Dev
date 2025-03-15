@@ -18,7 +18,7 @@ export default function Resources() {
           const data = await response.json();
 
           if (response.ok) {
-            coursesData = data.map(course => course.name); // Assuming courses have a 'name' field
+            coursesData = data.map((course) => course.name); // Assuming courses have a 'name' field
           }
         } else {
           // Fetch only enrolled courses from localStorage
@@ -42,6 +42,15 @@ export default function Resources() {
     fetchCourses();
   }, [userRole]);
 
+  // Handle navigation for "Add" or "Enroll"
+  const handleNavigation = () => {
+    if (userRole === "educator") {
+      navigate("/Add-Course"); // Navigate to add courses page
+    } else {
+      navigate("/Register-Course"); // Navigate to enrollment page
+    }
+  };
+
   return (
     <div className="resources-container">
       <h1 className="resources-title">Resources</h1>
@@ -49,7 +58,10 @@ export default function Resources() {
       {courses.length === 0 ? (
         <p className="text-center text-gray-600 mt-6 text-lg">
           Nothing to show,{" "}
-          <span className="font-semibold">
+          <span
+            className="font-semibold text-blue-600 cursor-pointer hover:underline"
+            onClick={handleNavigation}
+          >
             {userRole === "educator" ? "Add" : "Enroll"}
           </span>{" "}
           to view Lecture PDFs.
@@ -57,13 +69,18 @@ export default function Resources() {
       ) : (
         <div className="resources-grid">
           {courses.map((course, index) => {
-            const courseName = typeof course === "string" ? course : course?.courseId || "Unnamed Course";
+            const courseName =
+              typeof course === "string"
+                ? course
+                : course?.courseId || "Unnamed Course";
 
             return (
               <button
                 key={index}
                 className="resource-card bg-blue-100 border border-blue-300 hover:bg-blue-200 transition-all"
-                onClick={() => navigate(`/lectures/${courseName.replace(/\s+/g, "_")}`)}
+                onClick={() =>
+                  navigate(`/lectures/${courseName.replace(/\s+/g, "_")}`)
+                }
               >
                 <h2 className="resource-title text-blue-700">{courseName}</h2>
               </button>

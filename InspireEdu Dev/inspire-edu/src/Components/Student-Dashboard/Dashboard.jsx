@@ -10,7 +10,7 @@ const Dashboard = () => {
     navigate("/Login"); 
   };
   const email = localStorage.getItem("email");
-  const student_name = email ? email.match(/^([^@]+)/)?.[1] : "Student";
+  const student_name = localStorage.getItem("name") || "Student"; 
   console.log(student_name)
 
   return (
