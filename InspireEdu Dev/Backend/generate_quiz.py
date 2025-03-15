@@ -26,7 +26,21 @@ def generate_mcqs(api_key, text, num_questions=5):
     - Easy: Questions that test basic recall of facts.
     - Medium: Questions that require understanding of concepts.
     - Hard: Questions that require analysis, synthesis, or application of knowledge.
-    Label each question with its difficulty level in parentheses, e.g., (Easy), (Medium), (Hard).
+
+    **Format each question as follows:**
+    1. Start with the question number and the question text.
+    2. Add the difficulty level in parentheses, surrounded by asterisks, e.g., **(Easy)**, **(Medium)**, **(Hard)**.
+    3. List the answer choices, each starting with A), B), C), D), etc., on separate lines.
+    4. End with the correct answer in the format: **Answer:** X) Correct Answer.
+
+    Example:
+    **1. What does the IoT equation "Physical Object + Controller, Sensor and Actuator + Internet" represent? (Easy)**
+    A) Traditional networking
+    B) Internet of Things (IoT)
+    C) Cloud computing architecture
+    D) Ambient Intelligence (AmI)
+    **Answer:** B) Internet of Things (IoT)
+
     Text: {text}
     """
     payload = {
@@ -53,13 +67,13 @@ def generate_mcqs(api_key, text, num_questions=5):
             return response_data["choices"][0]["message"]["content"]
         else:
             print("Unexpected API response format.")
-            return []
+            return ""
     except requests.exceptions.RequestException as e:
         print(f"API Request Failed: {e}")
-        return []
+        return ""
     except ValueError as e:
         print(f"Failed to Parse JSON: {e}")
-        return []
+        return ""
 
 def save_quiz_to_pdf(quiz_path, mcqs):
     # Create a PDF file
@@ -79,8 +93,27 @@ def save_quiz_to_pdf(quiz_path, mcqs):
             y_position = height - 50
             c.setFont("Helvetica", 12)
 
-        c.drawString(50, y_position, line)
-        y_position -= 15  # Move down by 15 units for the next line
+        # Format the line based on its content
+        if line.strip().startswith("**") and line.strip().endswith("**"):
+            # Bold text for questions and answers
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(50, y_position, line.strip("**"))
+            y_position -= 15
+        elif line.strip().startswith("A)") or line.strip().startswith("B)") or line.strip().startswith("C)") or line.strip().startswith("D)"):
+            # Regular text for answer choices
+            c.setFont("Helvetica", 12)
+            c.drawString(50, y_position, line.strip())
+            y_position -= 15
+        elif line.strip().startswith("**Answer:**"):
+            # Bold text for the correct answer
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(50, y_position, line.strip())
+            y_position -= 15
+        else:
+            # Regular text for other lines
+            c.setFont("Helvetica", 12)
+            c.drawString(50, y_position, line.strip())
+            y_position -= 15
 
     # Save the PDF
     c.save()

@@ -406,7 +406,7 @@ app.get("/quiz-questions", async (req, res) => {
 
           // Extract question number and text
           const questionLine = lines[0];
-          const questionNumberMatch = questionLine.match(/\*\*(\d+)\./);
+          const questionNumberMatch = questionLine.match(/(\d+)\./);
           if (!questionNumberMatch) return;
 
           const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
@@ -472,10 +472,12 @@ app.post("/submit-quiz", async (req, res) => {
 
           // Extract question number and text
           const questionLine = lines[0];
-          const questionNumberMatch = questionLine.match(/\*\*(\d+)\./);
+          const questionNumberMatch = questionLine.match(/(\d+)\./);
           if (!questionNumberMatch) return;
 
           const questionNumber = questionNumberMatch[1];
+          /*console.log("questionNumber:");
+          console.log(questionNumber);*/
           const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
 
           // Extract options and correct answer
@@ -490,6 +492,7 @@ app.post("/submit-quiz", async (req, res) => {
                   correctAnswer = lines[i].replace("**Answer:**", "").trim();
               }
           }
+  
 
           // Store the correct answer
           correctAnswers[questionNumber-1] = {
@@ -505,12 +508,12 @@ app.post("/submit-quiz", async (req, res) => {
       Object.keys(userAnswers).forEach((questionIndex) => {
           const userAnswer = userAnswers[questionIndex];
           const correctAnswerData = correctAnswers[questionIndex]; // Question numbers start from 1
-          console.log("question index:");
+          /*console.log("question index:");
           console.log(questionIndex);
           console.log("user answer:");
           console.log(userAnswer);
-          console.log("correct answer:");
-          console.log(correctAnswerData.correctAnswer);
+          console.log("correct answer data:");
+          console.log(correctAnswerData);*/
 
 
           if (correctAnswerData && userAnswer === correctAnswerData.correctAnswer) {
