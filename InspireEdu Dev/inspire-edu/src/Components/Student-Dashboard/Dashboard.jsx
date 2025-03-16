@@ -81,7 +81,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="welcome-card">
         <h2 className="animated-header">
-          <span className="welcome">Welcome Back </span> 
+          <span className="welcome">Welcome Back , </span> 
           {animatedName}
         </h2>
         <p>Your tasks for today</p>
