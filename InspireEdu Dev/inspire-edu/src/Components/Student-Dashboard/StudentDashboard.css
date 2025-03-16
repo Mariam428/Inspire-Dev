@@ -30,31 +30,36 @@
 .dashboard-header h1 {
   font-size: 28px;
   font-weight: 700;
-  color: #333;
+  color: #1e3a8a;
   margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+.welcome{
+  color: #1e3a8a;
 }
 
+/* Logout button styled similarly to resource cards */
 .logout-btn {
   padding: 10px 24px;
-  background-color: #fff3cd;
-  border: none;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  border: 2px solid #93c5fd;
   border-radius: 30px;
   cursor: pointer;
   font-weight: 600;
-  color: #8a6d3b;
+  color: #1e40af;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(30, 64, 175, 0.15);
 }
 
 .logout-btn:hover {
-  background-color: #ffeeba;
+  background: linear-gradient(135deg, #bfdbfe, #e0f2fe);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 12px rgba(30, 64, 175, 0.2);
 }
 
-/* Welcome card styling */
+/* Welcome card */
 .welcome-card {
-  background-color: #f3e5d7;
+  background: linear-gradient(135deg, #e0f2fe, #f0f6fc);
   padding: 30px;
   border-radius: 16px;
   margin-bottom: 24px;
@@ -63,17 +68,44 @@
 }
 
 .welcome-card h2 {
-  color: #8b5e34;
+  color: #1e3a8a;
   font-size: 24px;
   font-weight: 700;
   margin: 0 0 16px 0;
+  animation: slideFadeLeft 0.8s ease-out forwards;
+  font-family: 'Playfair Display', serif;
 }
 
 .welcome-card p {
-  color: #8b5e34;
+  color: #1e3a8a;
   font-size: 16px;
   line-height: 1.5;
   margin: 0;
+}
+
+/* Animated header letters */
+.animated-header .letter {
+  display: inline-block;
+  animation: scaleBounce 0.6s ease forwards;
+  animation-delay: calc(var(--i) * 0.05s);
+  transform-origin: bottom;
+  opacity: 0;
+  color: #1e3a8a;
+}
+
+@keyframes scaleBounce {
+  0% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Section card styling */
@@ -96,11 +128,11 @@
 }
 
 .section-card.study {
-  background-color: #e8f4ff;
+  background-color: #e0f2fe;
 }
 
 .section-card.quizzes {
-  background-color: #e8f4ea;
+  background-color: #dbeafe;
 }
 
 .section-header {
@@ -116,7 +148,7 @@
   font-size: 22px;
   font-weight: 700;
   margin: 0;
-  color: #2d3748;
+  color: #1e3a8a;
 }
 
 .section-card.study .section-header h2 {
@@ -124,7 +156,7 @@
 }
 
 .section-card.quizzes .section-header h2 {
-  color: #2f855a;
+  color: #3b82f6;
 }
 
 /* Content card styling */
@@ -142,11 +174,11 @@
 }
 
 .section-card.study .course-card {
-  border-left-color: #63b3ed;
+  border-left-color: #60a5fa;
 }
 
 .section-card.quizzes .course-card {
-  border-left-color: #68d391;
+  border-left-color: #93c5fd;
 }
 
 .course-card:hover {
@@ -163,11 +195,11 @@
   font-weight: 700;
   margin: 0 0 8px 0;
   font-size: 18px;
-  color: #2d3748;
+  color: #1e3a8a;
 }
 
 .course-card p {
-  color: #4a5568;
+  color: #334155;
   font-size: 15px;
   line-height: 1.5;
   margin: 0;
@@ -184,17 +216,17 @@
   .dashboard-container {
     padding: 16px;
   }
-  
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  
+
   .welcome-card,
   .section-card {
     padding: 20px;
@@ -205,23 +237,23 @@
   .dashboard-header h1 {
     font-size: 24px;
   }
-  
+
   .welcome-card h2 {
     font-size: 20px;
   }
-  
+
   .section-header h2 {
     font-size: 18px;
   }
-  
+
   .course-card h3 {
     font-size: 16px;
   }
-  
+
   .course-card p {
     font-size: 14px;
   }
-  
+
   .logout-btn {
     width: 100%;
     text-align: center;

@@ -1,3 +1,4 @@
+// LectureResources.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -17,7 +18,9 @@ export default function LectureResources() {
                     ? `LECTURE ${lectureName}`
                     : lectureName.trim().replace(/lecture\s*/i, "LECTURE ");
 
-                const response = await axios.get(`http://localhost:5000/resources/${formattedSubject}/${formattedLecture}`);
+                const response = await axios.get(
+                    `http://localhost:5000/resources/${formattedSubject}/${formattedLecture}`
+                );
                 setResources(response.data);
             } catch (error) {
                 console.error("Error fetching resources", error);
@@ -35,18 +38,28 @@ export default function LectureResources() {
             <h1 className="lecture-title">{lectureName}</h1>
 
             {loading ? (
-                <p>Loading resources...</p>
+                <p className="lecture-message">Loading resources...</p>
             ) : error ? (
-                <p>{error}</p>
+                <p className="lecture-message error-text">{error}</p>
             ) : resources.length > 0 ? (
                 <div className="lecture-resources-grid">
                     {resources.map((resource, index) => (
                         <div key={index} className="resource-group">
-                            <a href={`http://localhost:5000${resource.filePath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
+                            <a
+                                href={`http://localhost:5000${resource.filePath}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="resource-card"
+                            >
                                 📄 Lecture PDF
                             </a>
                             {resource.summaryPath && (
-                                <a href={`http://localhost:5000${resource.summaryPath}`} target="_blank" rel="noopener noreferrer" className="resource-card">
+                                <a
+                                    href={`http://localhost:5000${resource.summaryPath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="resource-card"
+                                >
                                     📑 Lecture Summary
                                 </a>
                             )}
@@ -54,7 +67,7 @@ export default function LectureResources() {
                     ))}
                 </div>
             ) : (
-                <p>No resources uploaded for this lecture.</p>
+                <p className="lecture-message">No resources uploaded for this lecture.</p>
             )}
         </div>
     );

@@ -1,83 +1,135 @@
-/* Main Container */
-.grades-container {
-  padding: 2rem;
-  max-width: 1100px;
-  margin: auto;
-  text-align: center;
+/* Full Page Reset and Smooth Scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
 }
 
-/* Title */
+/* Ensure container fills entire height */
+.grades-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Optional: center if you want vertical centering */
+  align-items: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+  font-family: 'Inter', sans-serif;
+  color: #2d2d2d;
+  box-sizing: border-box;
+}
+
+/* Title Styling */
 .grades-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #2b6cb0, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 5px rgba(96, 165, 250, 0.25);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 2.5rem;
+  animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+/* Optional Filter Buttons */
+.filter-buttons {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-button {
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: 2rem;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(to right, #3b82f6, #60a5fa);
+  color: white;
+  box-shadow: 0 4px 10px rgba(96, 165, 250, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(96, 165, 250, 0.4);
 }
 
 /* Grid Layout */
 .grades-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
   justify-content: center;
-  max-width: 800px;
+  max-width: 1000px;
   margin: auto;
+  width: 100%;
 }
 
-/* Card Styling */
+/* Unified Blue Card Styling */
 .grade-card {
-  border-radius: 16px;
-  padding: 30px;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  min-height: 140px;
+  min-height: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px solid #d1d5db;
+  border: 2px solid #bfdbfe;
+  background: linear-gradient(135deg, #e0f2fe, #f0f6fc);
+  animation: fadeSlideIn 0.6s ease-out forwards;
 }
 
 /* Hover Effect */
 .grade-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Grade Colors */
-.grade-green {
-  background-color: #e8f4ea; /* Light Green */
-  color: #2E7D32;
-}
-
-.grade-yellow {
-  background-color: #f0ebd5; /* Light Yellow */
-  color: #ddb935;
-}
-
-.grade-red {
-  background-color: #f3e5d7; /* Light Red */
-  color: #B71C1C;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* Course Name */
 .course-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #374151;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  color: #1e3a8a;
+  margin-bottom: 0.5rem;
 }
 
-/* Grade */
+/* Grade Text */
 .course-grade {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: #1e40af;
 }
 
-/* Slogan */
+/* Slogan Text */
 .course-slogan {
   font-style: italic;
-  font-size: 14px;
-  color: #555;
-  margin-top: 5px;
+  font-size: 1rem;
+  color: #4b5563;
+  margin-top: 0.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Animation */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,100 +1,104 @@
 .availability-container {
-  
-    text-align: center;
-    padding: 2rem;
-  
-  }
- 
-  .availability-title {
-    font-size: 48px;             /* Bigger font size */
-  font-style: italic;          /* Italic text */
-  text-align: center;          /* Center alignment */
-  color: rgb(68, 20, 36);              /* Rich brown tone (you can change it) */
-  margin-top: 20px;
-  margin-bottom: 30px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);  /* Soft shadow */
-  font-family: 'Georgia', serif;  /* Elegant font */
-  letter-spacing: 1px;
-  }
-  
-  .calendar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    justify-content: center;
-    max-width: 800px;
-    margin: auto;
-  }
-  
-  .day-card {
-    width: 150px;  /* Adjust as needed */
-    height: 148px; 
-    background-image: url('/day.jpg'); /* Replace with your image path */
-    background-size: cover; /* Ensures the image covers the entire card */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents tiling */
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.2s ease-in-out;
-    color: black; /* Adjust text color for readability */
-    background-size: contain;
-}
-
-  
-  .day-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .day-card h2 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    margin-top: 25px; /* Moves the title up */
-}
-
-  
-  .day-card input {
-    width: 50px;
-    padding: 5px;
-    font-size: 1rem;
-    text-align: center;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 5px;
-  }
-  
-  .submit-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    background-color: #fee2e2; /* Light Red */
-    color: black;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .submit-button:hover {
-    background-color: #93c5fd; /* Light Blue */
-  }
-  
-  .submit-button:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .availability-container {
-    
-    height: 50vw;
+  text-align: center;
+  padding: 2rem;
+  height: 50vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+  color: #2d2d2d;
 }
+
+.availability-title {
+  font-size: 48px;
+  font-style: italic;
+  text-align: center;
+  color: #2b6cb0;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 1px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-content: center;
+  max-width: 800px;
+  margin: auto;
+}
+
+.day-card {
+  width: 150px;
+  height: 148px;
+  background: linear-gradient(to bottom right, #f0f4fa, #dceaf8);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  color: #2d2d2d;
+  font-family: 'Inter', sans-serif;
+}
+
+.day-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.day-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  margin-top: 25px;
+  font-weight: bold;
+  color: #2b6cb0;
+  font-style: italic;
+}
+
+.day-card input {
+  width: 50px;
+  padding: 5px;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  background: #ffffff;
+  color: #2d2d2d;
+}
+
+.submit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #e6f0fa;
+  color: #2b6cb0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.submit-button:hover {
+  background-color: #d0e4f7;
+}
+
+.submit-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .summary-card {
- 
   font-size: 14px;
-  
+  font-style: italic;
+  color: #6b7c90;
+  background: linear-gradient(to bottom, #f7faff, #ebf2fa);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }

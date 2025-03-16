@@ -1,0 +1,114 @@
+/* LectureContent.css */
+
+/* Reset and Smooth Scroll */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+    color: #2d2d2d;
+  }
+  
+  /* Main Container */
+  .resources-container {
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  
+  /* Title Styling */
+  .resources-title {
+    font-size: 2.6rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(to right, #2b6cb0, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 5px rgba(96, 165, 250, 0.25);
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 2.5rem;
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  /* Grid Layout */
+  .resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+  }
+  
+  /* Group Wrapper for Lecture + Summary */
+  .resource-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Resource Card Styling */
+  .resource-card {
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #e0f2fe, #f0f6fc);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #bfdbfe;
+    animation: fadeSlideIn 0.6s ease-out forwards;
+    text-decoration: none;
+  }
+  
+  /* Hover Effect */
+  .resource-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Text Inside Card */
+  .resource-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+    color: #1e3a8a;
+    text-align: center;
+  }
+  
+  /* Text Messages */
+  .lecture-message {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #555;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  .error-text {
+    color: #d9534f;
+  }
+  
+  /* Animation Keyframes */
+  @keyframes fadeSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

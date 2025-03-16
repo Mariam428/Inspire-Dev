@@ -15,15 +15,15 @@ export default function Setup() {
 
 
             <div className="button-container">
-                <button className="navigate-button bg-blue-100 text-blue-700 border-blue-300"
+                <button className="navigate-button"
                         onClick={() => navigate("/study-plan/grades")}>
                     Track Progress
                 </button>
-                <button className="navigate-button bg-yellow-100 text-yellow-700 border-yellow-300"
+                <button className="navigate-button"
                         onClick={() => navigate("/study-plan/availability")}>
                     Set Availability
                 </button>
-                <button className="navigate-button bg-green-100 text-green-700 border-green-300"
+                <button className="navigate-button"
                         onClick={() => navigate(`/study-plan/schedule`)}>
                     Generate plan
                 </button>

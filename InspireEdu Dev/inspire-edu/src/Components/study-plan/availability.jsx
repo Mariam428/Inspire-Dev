@@ -42,8 +42,9 @@ export default function Availability() {
         body: JSON.stringify({
           availability, // ✅ actual availability from frontend
           grades: {
-            os: 5.5,
-            nlp: 10,
+            english: 5.5,
+            science: 9,
+            maths:1
           },
         }),
       });

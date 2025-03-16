@@ -1,76 +1,90 @@
-/* Resources.css */
+/* Reset and Smooth Scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+  color: #2d2d2d;
+}
 
-/* Main container */
+/* Main Container */
 .resources-container {
-  padding: 2rem;
+  min-height: 100vh;
+  padding: 3rem 2rem;
   max-width: 1100px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
 }
 
-/* Title */
+/* Title Styling */
 .resources-title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.6rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
+  background: linear-gradient(to right, #2b6cb0, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 5px rgba(96, 165, 250, 0.25);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 2.5rem;
+  animation: fadeSlideIn 0.8s ease-out forwards;
 }
 
-/* Grid layout (3 subjects per row) */
+/* Grid Layout (Responsive 3 Columns) */
 .resources-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px;
 }
 
-/* Resource Card */
+/* Resource Card Styling */
 .resource-card {
-  border-radius: 16px;
-  padding: 40px;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #e0f2fe, #f0f6fc);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  min-height: 150px;
+  min-height: 160px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  background-color: white;
+  align-items: center;
+  border: 2px solid #bfdbfe;
+  animation: fadeSlideIn 0.6s ease-out forwards;
 }
 
-/* Hover effect */
+/* Hover Effect */
 .resource-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* Text Styling */
+/* Text Inside Card */
 .resource-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  color: #1e3a8a;
+  text-align: center;
 }
 
-/* Color Classes for Backgrounds */
-.bg-green-100 { background-color: #d1fae5 !important; }
-.bg-orange-100 { background-color: #ffedd5 !important; }
-.bg-red-100 { background-color: #fee2e2 !important; }
-.bg-blue-100 { background-color: #dbeafe !important; }
-.bg-gray-100 { background-color: #f3f4f6 !important; }
-.bg-yellow-100 { background-color: #fef9c3 !important; }
-
-/* Color Classes for Text */
-.text-green-700 { color: #047857 !important; }
-.text-orange-700 { color: #c2410c !important; }
-.text-red-700 { color: #b91c1c !important; }
-.text-blue-700 { color: #1d4ed8 !important; }
-.text-gray-700 { color: #374151 !important; }
-.text-yellow-700 { color: #a16207 !important; }
-
-/* Border Colors */
-.border-green-300 { border: 2px solid #86efac !important; }
-.border-orange-300 { border: 2px solid #fdba74 !important; }
-.border-red-300 { border: 2px solid #fca5a5 !important; }
-.border-blue-300 { border: 2px solid #93c5fd !important; }
-.border-gray-300 { border: 2px solid #d1d5db !important; }
-.border-yellow-300 { border: 2px solid #fde047 !important; }
+/* Animation Keyframes */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,153 +1,105 @@
-/* Ensure full-page scrolling */
+/* General Reset and Full Page Styling */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+  color: #2d2d2d;
   overflow-y: auto;
 }
 
-/* Page Header Styling (optional enhancement) */
+/* Header Styling */
 .page-header {
-  font-size: 48px;             /* Bigger font size */
-  font-style: italic;          /* Italic text */
-  text-align: center;          /* Center alignment */
-  color: rgb(68, 20, 36);              /* Rich brown tone (you can change it) */
-  margin-top: 20px;
-  margin-bottom: 30px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);  /* Soft shadow */
-  font-family: 'Georgia', serif;  /* Elegant font */
+  font-size: 48px;
+  text-align: center;
+  color: #2b6cb0;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-family: 'Playfair Display', serif;
   letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-
-/* Schedule container grid */
+/* Schedule Container */
 .schedule-container {
-  
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); /* Slightly smaller cards */
-  gap: 4px; /* Less spacing between cards */
-  padding: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 30px 60px;
   max-width: 1200px;
   margin: auto;
-  min-height: 100vh;
-  height: 50vw;
-  width: 75vw;
 }
 
-/* Scrollable content wrapper */
-.main-content {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  overflow-y: auto;
-}
-
-/* Day card styling */
+/* Day Card Styling */
 .day-card-sched {
-  background-color: #f3e2d7;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 0px;
-  border: 2px solid #4a2c1e;
-  padding: 6px; /* Reduced padding */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  color: #000000;
-  min-height: 130px;
-  max-height: 300px;
-  max-width: 230px;
-  width: 90%; /* Slightly more compact */
+  background: linear-gradient(to bottom right, #f0f4fa, #dceaf8);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
-  justify-content: flex-start; /* Align content to the top */
-  font-family: 'Times New Roman';
-  font-size: 12px;
+  justify-content: flex-start;
   overflow-y: auto;
-  margin: 2px;
+  max-height: 350px;
 }
+
+.day-card-sched:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Day Label Styling */
+.day {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2b6cb0;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #e6f0fa, #d0e4f7);
+  text-align: center;
+  font-style: italic;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Task Styling */
 .task {
-  padding: 0;
-  margin: 0;
-  line-height: 1.3;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: linear-gradient(to right, #ffffff, #f8fbff);
+  border-left: 4px solid #2b6cb0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  text-align: left;
 }
 
 .task strong {
   display: block;
-  margin-bottom: 0px; /* Reduce space below the subject line */
-  font-size: 14px;
+  font-size: 15px;
+  color: #2b6cb0;
+  margin-bottom: 6px;
 }
 
+/* Task List */
 .task ul {
+  padding-left: 18px;
   margin: 0;
-  padding-left: 16px;
-  line-height: 1.2;
+  line-height: 1.5;
 }
 
 .task li {
-  margin-bottom: 2px; /* Reduce space between bullet points */
-  font-size: 13px;
-}
-
-
-
-/* Day label */
-.day {
-  color: #8b5e34;
-  font-size: 20px;
+  font-size: 13.5px;
+  color: #3b3b3b;
   margin-bottom: 4px;
+}
+
+/* Empty Day Message */
+.day-card-sched p {
   font-style: italic;
-  background-color: #f8ece3;
-  height: auto;
+  font-size: 14px;
+  color: #6b7c90;
+  margin-top: 20px;
 }
-
-/* Notes textarea */
-
-
-
-.schedule-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Maximum 4 columns */
-  grid-template-rows: auto; /* Auto height */
-  gap: 20px; /* Adjust spacing */
-  justify-content: center; /* Center the content */
-  padding: 20px;
-}
-
-.day-card-sched {
-  background: #f5e1d1;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.day-card-sched:nth-child(1),
-.day-card-sched:nth-child(2),
-.day-card-sched:nth-child(3) {
-  grid-column: span 1; /* First row: 3 cards */
-}
-
-.day-card-sched:nth-child(4) {
-  grid-column: 1 / span 4; /* Moves 4th item to the new row */
-}
-
-.day-card-sched:nth-child(n+4) {
-  grid-column: span 1; /* Second row: 4 cards */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

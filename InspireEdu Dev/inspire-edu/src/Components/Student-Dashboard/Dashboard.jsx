@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./StudentDashboard.css";
 
@@ -7,11 +7,23 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    navigate("/Login"); 
+    navigate("/Login");
   };
+
   const email = localStorage.getItem("email");
   const student_name = email ? email.match(/^([^@]+)/)?.[1] : "Student";
-  console.log(student_name)
+  const [animatedName, setAnimatedName] = useState([]);
+
+  useEffect(() => {
+    if (student_name) {
+      const nameLetters = student_name.split("").map((char, index) => (
+        <span key={index} className="letter" style={{ "--i": index }}>
+          {char}
+        </span>
+      ));
+      setAnimatedName(nameLetters);
+    }
+  }, [student_name]);
 
   return (
     <div className="dashboard-container">
@@ -21,14 +33,18 @@ const Dashboard = () => {
       </div>
 
       <div className="welcome-card">
-        <h2>Welcome, {student_name} </h2>
+        <h2 className="animated-header">
+          <span className="welcome">Welcome Back</span> {animatedName}
+        </h2>
         <p>Your tasks for today</p>
       </div>
 
       <div className="dashboard-grid">
         <div className="section-card study">
           <div className="section-header">
-            <span><img src="/icons/studying_950232.png" alt="" /></span>
+            <span>
+              <img src="/icons/studying_950232.png" alt="" />
+            </span>
             <h2>Study</h2>
           </div>
           <div>
@@ -46,9 +62,12 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
         <div className="section-card quizzes">
           <div className="section-header">
-            <span><img src="/icons/quiz_17897983.png" alt="" /></span>
+            <span>
+              <img src="/icons/quiz_17897983.png" alt="" />
+            </span>
             <h2>Quizzes</h2>
           </div>
           <div>
