@@ -11,7 +11,6 @@ const Dashboard = () => {
   };
 
   const email = localStorage.getItem("email");
-  const student_name = email ? email.match(/^([^@]+)/)?.[1] : "Student";
   const [animatedName, setAnimatedName] = useState([]);
 
   useEffect(() => {
@@ -24,7 +23,8 @@ const Dashboard = () => {
       setAnimatedName(nameLetters);
     }
   }, [student_name]);
-
+  const student_name = localStorage.getItem("name") || "Student"; 
+  console.log(student_name)
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
