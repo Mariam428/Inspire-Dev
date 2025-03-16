@@ -90,7 +90,7 @@
   animation-delay: calc(var(--i) * 0.05s);
   transform-origin: bottom;
   opacity: 0;
-  color: #1e3a8a;
+  color: #1e3a8a !important;
 }
 
 @keyframes scaleBounce {

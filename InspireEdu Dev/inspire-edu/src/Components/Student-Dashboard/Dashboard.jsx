@@ -5,15 +5,60 @@ import "./StudentDashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
+  // Logout function
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     navigate("/Login");
   };
 
+  // Retrieve localStorage values
   const email = localStorage.getItem("email");
-  const [animatedName, setAnimatedName] = useState([]);
-  
   const student_name = localStorage.getItem("name") || "Student"; 
+  const weekNumber = localStorage.getItem("weekNumber");
+  const userId = localStorage.getItem("userId");
+
+  // States
+  const [studyTasks, setStudyTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [animatedName, setAnimatedName] = useState([]);
+
+  // Fetch tasks
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!userId || !weekNumber) {
+        setError("User ID or Week Number missing.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/plan?userId=${userId}&weekNumber=${weekNumber}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError("No available plan for this week. Please set your availability first.");
+          } else {
+            setError("Something went wrong while fetching the plan.");
+          }
+          return;
+        }
+
+        const data = await response.json();
+        const today = new Date().toLocaleString("en-US", { weekday: "long" });
+
+        setStudyTasks(data.studyPlan[today] || []);
+      } catch (err) {
+        console.error("❌ Error fetching schedule:", err);
+        setError("Failed to connect to the server.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, [userId, weekNumber]);
+
+  // Animate student name
   useEffect(() => {
     if (student_name) {
       const nameLetters = student_name.split("").map((char, index) => (
@@ -24,64 +69,71 @@ const Dashboard = () => {
       setAnimatedName(nameLetters);
     }
   }, [student_name]);
-  
-  console.log(student_name)
+
   return (
     <div className="dashboard-container">
+      {/* Header Section */}
       <div className="dashboard-header">
         <h1>Dashboard</h1>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </div>
 
+      {/* Welcome Section */}
       <div className="welcome-card">
         <h2 className="animated-header">
-          <span className="welcome">Welcome Back</span> {animatedName}
+          <span className="welcome">Welcome Back </span> 
+          {animatedName}
         </h2>
         <p>Your tasks for today</p>
       </div>
 
+      {/* Dashboard Grid */}
       <div className="dashboard-grid">
+        
+        {/* Study Section */}
         <div className="section-card study">
           <div className="section-header">
             <span>
-              <img src="/icons/studying_950232.png" alt="" />
+              <img src="/icons/studying_950232.png" alt="Study Icon" />
             </span>
             <h2>Study</h2>
           </div>
           <div>
-            <div className="course-card">
-              <h3>OS</h3>
-              <p>• Lecture 1</p>
-            </div>
-            <div className="course-card">
-              <h3>Electronics</h3>
-              <p>• Lecture 2</p>
-            </div>
-            <div className="course-card">
-              <h3>English</h3>
-              <p>• Lecture 1</p>
-            </div>
+            {loading ? (
+              <p>Loading tasks...</p>
+            ) : error ? (
+              <p className="error">{error}</p>
+            ) : studyTasks.length > 0 ? (
+              studyTasks.map((task, index) => (
+                <div key={index} className="course-card">
+                  <h3>{task.subject}</h3>
+                  <p>• {task.hours} hours</p>
+                  <ul>
+                    {task.details.map((detail, i) => (
+                      <li key={i}>{detail}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            ) : (
+              <p>No tasks for today.</p>
+            )}
           </div>
         </div>
 
+        {/* Quizzes Section */}
         <div className="section-card quizzes">
           <div className="section-header">
             <span>
-              <img src="/icons/quiz_17897983.png" alt="" />
+              <img src="/icons/quiz_17897983.png" alt="Quiz Icon" />
             </span>
             <h2>Quizzes</h2>
           </div>
           <div>
-            <div className="course-card">
-              <h3>DSP</h3>
-              <p>• Quiz on lecture 1</p>
-            </div>
-            <div className="course-card">
-              <h3>Neural Networks</h3>
-              <p>• Quiz on lecture 2</p>
-            </div>
+            <p>No quizzes for today.</p>
           </div>
         </div>
+
       </div>
     </div>
   );
