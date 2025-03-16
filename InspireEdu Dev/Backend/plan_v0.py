@@ -5,7 +5,10 @@ def load_json_files():
         availability = json.load(f)
     with open("temp_grades.json", "r") as f:
         grades = json.load(f)
-    return availability, grades
+    with open("temp_weeknumber.json", "r") as f:
+        week = json.load(f)
+    return availability, grades,week
+
 
 def compute_total_hours(availability):
     return sum(hours for hours in availability.values() if hours > 0)
@@ -112,13 +115,12 @@ def create_plan(availability, mastery_to_hours, categorized_courses, todo_list):
     return study_schedule
 
 def main():
-    availability, grades = load_json_files()
+    availability, grades,week = load_json_files()
     total_hours = compute_total_hours(availability)
     mastery_levels = calculate_mastery_levels(grades)
     mastery_to_hours = map_mastery_to_needed_hours(mastery_levels, total_hours)
     categorized_courses = categorize_courses(mastery_levels)
-    todo_list = initialize_todo_list(current_week=5)
-
+    todo_list = initialize_todo_list(current_week=week["weekNumber"])
     schedule = create_plan(availability, mastery_to_hours, categorized_courses, todo_list)
 
     # Print final plan

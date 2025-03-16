@@ -111,27 +111,49 @@ const CourseSchema = new mongoose.Schema({
   textColor: { type: String, required: true },
   borderColor: { type: String, required: true }
 });
-
 const Course = mongoose.model("Course", CourseSchema);
 module.exports = Course;
 app.use(cors());
 app.use(express.json());
+//PLAAAAN//
 
-app.post("/generate", (req, res) => {
-  const { availability, grades } = req.body;
+// ✅ Define StudySession schema first
+const studySessionSchema = new mongoose.Schema({
+  subject: { type: String, required: true },
+  hours: { type: Number, required: true },
+  details: { type: [String], default: [] },
+});
+
+// ✅ Define WeeklyPlan schema next
+const weeklyPlanSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  weekNumber: { type: Number, required: true },
+  studyPlan: {
+    type: Map,
+    of: [studySessionSchema],
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+// ✅ Create the model
+const WeeklyStudyPlan = mongoose.model("WeeklyStudyPlan", weeklyPlanSchema);
+
+// ✅ Generate study plan route
+app.post("/generate", async (req, res) => {
+  const { availability, grades, weekNumber, userId } = req.body;
 
   console.log("✅ POST /generate was hit!");
-  console.log("📥 Received availability:", availability);
-  console.log("📥 Received grades:", grades);
+  console.log("📥 Received weekNumber:", weekNumber);
 
   // Save availability and grades as temp JSON files
-  fs.writeFileSync("temp_availability.json", JSON.stringify(availability)); //from front
-  fs.writeFileSync("temp_grades.json", JSON.stringify(grades)); //will be modified to fetch from db
+  fs.writeFileSync("temp_availability.json", JSON.stringify(availability));
+  fs.writeFileSync("temp_grades.json", JSON.stringify(grades));
+  fs.writeFileSync("temp_weeknumber.json", JSON.stringify({ weekNumber }));
 
-  const pythonScriptPath = path.join(__dirname, "plan_v0.py");
+  //const pythonScriptPath = path.join(__dirname, "plan_v0.py");
 
-  // Execute the Python script
-  exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
+  exec('python "plan_v0.py"', async (error, stdout, stderr) => {
     if (error) {
       console.error("❌ Python script error:", error);
       return res.status(500).json({ error: "Failed to generate plan" });
@@ -140,7 +162,6 @@ app.post("/generate", (req, res) => {
     console.log("🐍 Python script executed successfully");
     console.log("📤 Python output:", stdout);
 
-    // ✅ Try to parse the Python stdout
     let parsedOutput;
     try {
       parsedOutput = JSON.parse(stdout.trim());
@@ -149,13 +170,63 @@ app.post("/generate", (req, res) => {
       return res.status(500).json({ error: "Invalid output from Python script" });
     }
 
-    // ✅ Send structured JSON response
-    res.json({
-      message: "Study plan generated successfully!",
-      scheduleData: parsedOutput,
-    });
+    try {
+      // ✅ Check if plan exists → Update if exists, else create new (Upsert logic)
+      const existingPlan = await WeeklyStudyPlan.findOne({
+        userId: userId,
+        weekNumber: weekNumber,
+      });
+
+      if (existingPlan) {
+        existingPlan.studyPlan = parsedOutput;
+        existingPlan.updatedAt = new Date();
+        await existingPlan.save();
+        console.log("🔄 Existing plan updated in DB");
+      } else {
+        const newPlan = new WeeklyStudyPlan({
+          userId: userId,
+          weekNumber: weekNumber,
+          studyPlan: parsedOutput,
+        });
+        await newPlan.save();
+        console.log("✅ New plan saved to DB");
+      }
+
+      // ✅ Send structured response
+      res.json({
+        message: "Study plan generated and saved successfully!",
+        scheduleData: parsedOutput,
+      });
+    } catch (dbErr) {
+      console.error("❌ DB Save/Update Error:", dbErr);
+      return res.status(500).json({ error: "Failed to save/update study plan in DB" });
+    }
   });
 });
+
+// Export app or start server if needed
+//module.exports = app;
+app.get("/plan", async (req, res) => {
+  const { userId, weekNumber } = req.query;
+
+  try {
+    const plan = await WeeklyStudyPlan.findOne({ userId, weekNumber });
+
+    if (!plan) {
+      return res.status(404).json({ message: "No plan found for this week" });
+    }
+
+    res.json({
+      message: "Study plan fetched successfully",
+      studyPlan: plan.studyPlan,
+    });
+  } catch (err) {
+    console.error("❌ Error fetching plan:", err);
+    res.status(500).json({ message: "Server error while fetching plan" });
+  }
+});
+
+
 
 
 // 🔹 Configure Multer for File Uploads
@@ -207,7 +278,8 @@ app.post("/login", async (req, res) => {
       role: user.role,
       registrationDate: user.registrationDate,
       name: user.name,
-      email: user.email 
+      email: user.email,
+      userId: user._id 
   });
 });
 
@@ -544,6 +616,10 @@ app.post("/submit-quiz", async (req, res) => {
       res.status(500).json({ error: "Failed to process the quiz" });
   }
 });
+
+
+
+
 // 🔹 Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

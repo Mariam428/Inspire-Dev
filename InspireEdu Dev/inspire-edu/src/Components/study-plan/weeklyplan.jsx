@@ -7,8 +7,9 @@ export default function Setup() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Get registration date from localStorage
+        // Get registration date from localStorage ///
         const registrationDate = localStorage.getItem("registrationDate");
+        //////// VERY IMPORTANT ////////////
         
         if (registrationDate) {
             const regDate = new Date(registrationDate);
@@ -19,6 +20,8 @@ export default function Setup() {
             const weeksSinceRegistration = Math.floor(timeDiff / (7 * 24 * 60 * 60 * 1000)) + 1;
 
             setWeekNumber(weeksSinceRegistration);
+            localStorage.setItem("weekNumber", weeksSinceRegistration);
+
         }
     }, []);
 
@@ -38,11 +41,14 @@ export default function Setup() {
                         onClick={() => navigate("/study-plan/availability")}>
                     Set Availability
                 </button>
-                <button className="navigate-button"
-                        onClick={() => navigate(`/study-plan/schedule`)}>
-                    Generate plan
+                <button
+                      className="navigate-button"
+                 onClick={() => navigate("/study-plan/schedule")}>
+
+                  Weekly Plan
                 </button>
-            </div>
-        </div>
+
+                     </div>
+                       </div>
     );
 }

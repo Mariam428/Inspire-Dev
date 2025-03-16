@@ -12,7 +12,8 @@ const Dashboard = () => {
 
   const email = localStorage.getItem("email");
   const [animatedName, setAnimatedName] = useState([]);
-
+  
+  const student_name = localStorage.getItem("name") || "Student"; 
   useEffect(() => {
     if (student_name) {
       const nameLetters = student_name.split("").map((char, index) => (
@@ -23,7 +24,7 @@ const Dashboard = () => {
       setAnimatedName(nameLetters);
     }
   }, [student_name]);
-  const student_name = localStorage.getItem("name") || "Student"; 
+  
   console.log(student_name)
   return (
     <div className="dashboard-container">

@@ -23,6 +23,7 @@ export default function Availability() {
   };
 
   const handleSubmit = async () => {
+    const userId = localStorage.getItem("userId");
     console.log("Selected Availability:", availability);
     
    
@@ -34,6 +35,8 @@ export default function Availability() {
     setSummary(formattedSummary);
 
     try {
+      const weekNumber = localStorage.getItem("weekNumber");
+      console.log(weekNumber)
       const response = await fetch("http://localhost:5000/generate", {
         method: "POST",
         headers: {
@@ -46,22 +49,15 @@ export default function Availability() {
             science: 9,
             maths:1
           },
+          weekNumber: parseInt(weekNumber),userId: userId,
         }),
       });
       const data = await response.json();
       console.log("✅ Backend Response Message:", data.message);
       console.log("📅 Schedule Data:", data.scheduleData);
-      localStorage.setItem("scheduleData", JSON.stringify(data.scheduleData));
-
-     // Retrieve into temp variable
-      const temp = JSON.parse(localStorage.getItem("scheduleData"));
-
-     // Log the temp variable
-     console.log("📦 Temp Schedule from Local Storage:", temp);
-
-      
-
      
+
+    
 
     } catch (error) {
       console.error("❌ Error reaching backend:", error);

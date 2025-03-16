@@ -25,6 +25,8 @@ const Login = () => {
       localStorage.setItem("role", data.role);
       localStorage.setItem("email", email);
       localStorage.setItem("name", data.name);
+      localStorage.setItem("userId", data.userId); 
+
       
       // Store registration date (we'll need to modify the backend to include this)
       if (data.registrationDate) {
