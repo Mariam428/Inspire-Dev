@@ -1,0 +1,47 @@
+**1. (Easy)**  
+What does IoT stand for?  
+A. Internet of Technology  
+B. Interconnected Operational Tags  
+C. Internet of Things  
+D. Integrated Online Transactions  
+**Correct Answer:** C. Internet of Things  
+
+---
+
+**2. (Medium)**  
+Which of the following is **NOT** a communication protocol commonly used in IoT systems?  
+A. Bluetooth  
+B. ZigBee  
+C. HTML  
+D. RFID  
+**Correct Answer:** C. HTML  
+
+---
+
+**3. (Medium)**  
+According to the IoT 4S rule, which of the following is **NOT** a required characteristic of an IoT system?  
+A. Simple  
+B. Secure  
+C. Static  
+D. Scalable  
+**Correct Answer:** C. Static  
+
+---
+
+**4. (Hard)**  
+A smart city project uses multiple sensor nodes to monitor air quality. Each node performs local analysis and sends aggregated data to the cloud for storage. The cloud application generates real-time pollution alerts. Which IoT level does this system represent?  
+A. Level-1  
+B. Level-3  
+C. Level-4  
+D. Level-5  
+**Correct Answer:** C. Level-4  
+
+---
+
+**5. (Easy)**  
+Which application domain of IoT includes "smart hospitals" and "patient surveillance"?  
+A. Energy Management  
+B. Healthcare  
+C. Agriculture  
+D. Transportation  
+**Correct Answer:** B. Healthcare

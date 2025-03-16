@@ -1,0 +1,42 @@
+**1. Which of the following is the most accurate definition of IoT according to the Oxford Dictionary (Jan 2022)? (Easy)**  
+A. A network of traditional household objects with sensors and software for internet communication.  
+B. Devices connected via the internet to share data without human interaction.  
+C. A system enabling machines to communicate directly using wired or wireless protocols.  
+D. Physical components interconnected via the internet to exchange data via explicit user requests.  
+**Correct Answer:** B  
+
+---
+
+**2. What is the "IoT Equation" as defined in the text? (Easy)**  
+A. Internet + Sensors = IoT  
+B. Physical Object + Controller/Sensor/Actuator + Internet = IoT  
+C. Data Analytics + Cloud Computing = IoT  
+D. Machine-to-Machine + Ambient Intelligence = IoT  
+**Correct Answer:** B  
+
+---
+
+**3. Which characteristic is NOT typically associated with IoT devices? (Medium)**  
+A. Minimal human intervention during operation.  
+B. Long battery lifetime for most devices.  
+C. Direct communication via explicitly defined links.  
+D. Scalability and smart functionality.  
+**Correct Answer:** C (IoT involves automatic communication without explicit links, unlike traditional networks.)  
+
+---
+
+**4. What distinguishes Machine-to-Machine (M2M) communication from IoT? (Medium)**  
+A. M2M requires human interaction to function.  
+B. M2M is a subset of IoT focused only on device-to-device communication via any channel.  
+C. IoT excludes wireless protocols like ZigBee and Bluetooth.  
+D. IoT devices cannot store data locally.  
+**Correct Answer:** B (M2M refers to direct device communication, while IoT extends to broader internet integration and data sharing.)  
+
+---
+
+**5. A company wants to deploy an IoT system for monitoring city-wide energy consumption. The system must handle large datasets and perform computationally intensive analysis. Which IoT level is most appropriate? (Hard)**  
+A. Level-2 (Local analysis with cloud storage)  
+B. Level-3 (Cloud analysis and applications)  
+C. Level-5 (Coordinator node with computationally intensive tasks)  
+D. Level-6 (Independent nodes with cloud communication)  
+**Correct Answer:** B (Level-3 specifies cloud-based storage and analysis for computationally intensive tasks, fitting the scenario.)
