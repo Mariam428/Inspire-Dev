@@ -203,6 +203,73 @@ app.post("/generate", async (req, res) => {
     }
   });
 });
+//GENERIC PLAN
+// ✅ Generate study plan route
+app.post("/generic", async (req, res) => {
+  const { availability, enrollments, userId, weekNumber } = req.body;
+
+  console.log("✅ POST /generic was hit!");
+  
+
+  // Save availability and grades as temp JSON files
+  fs.writeFileSync("temp_availability.json", JSON.stringify(availability));
+  fs.writeFileSync("temp_enrolled.json", JSON.stringify({ enrolledCourses: enrollments }));
+
+
+  
+
+  //const pythonScriptPath = path.join(__dirname, "plan_v0.py");
+
+  exec('python "plan_generic.py"', async (error, stdout, stderr) => {
+    if (error) {
+      console.error("❌ Python script error:", error);
+      return res.status(500).json({ error: "Failed to generate plan" });
+    }
+
+    console.log("🐍 Python script executed successfully");
+    console.log("📤 Python output:", stdout);
+
+    let parsedOutput;
+    try {
+      parsedOutput = JSON.parse(stdout.trim());
+    } catch (e) {
+      console.error("❌ Failed to parse Python output as JSON:", e);
+      return res.status(500).json({ error: "Invalid output from Python script" });
+    }
+
+    try {
+      // ✅ Check if plan exists → Update if exists, else create new (Upsert logic)
+      const existingPlan = await WeeklyStudyPlan.findOne({
+        userId: userId,
+        weekNumber: weekNumber,
+      });
+
+      if (existingPlan) {
+        existingPlan.studyPlan = parsedOutput;
+        existingPlan.updatedAt = new Date();
+        await existingPlan.save();
+        console.log("🔄 Existing plan updated in DB");
+      } else {
+        const newPlan = new WeeklyStudyPlan({
+          userId: userId,
+          weekNumber: weekNumber,
+          studyPlan: parsedOutput,
+        });
+        await newPlan.save();
+        console.log("✅ New plan saved to DB");
+      }
+
+      // ✅ Send structured response
+      res.json({
+        message: "Study plan generated and saved successfully!",
+        scheduleData: parsedOutput,
+      });
+    } catch (dbErr) {
+      console.error("❌ DB Save/Update Error:", dbErr);
+      return res.status(500).json({ error: "Failed to save/update study plan in DB" });
+    }
+  });
+});
 
 // Export app or start server if needed
 //module.exports = app;

@@ -13,7 +13,7 @@ export default function Availability() {
   });
 
   const [summary, setSummary] = useState("");
-  const [scheduleData, setScheduleData] = useState(null); // ✅ To store backend response
+  const [scheduleData, setScheduleData] = useState(null);
 
   const handleHoursChange = (day, hours) => {
     setAvailability((prev) => ({
@@ -24,44 +24,64 @@ export default function Availability() {
 
   const handleSubmit = async () => {
     const userId = localStorage.getItem("userId");
+    const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+    const weekNumber = parseInt(localStorage.getItem("weekNumber"));
+
     console.log("Selected Availability:", availability);
-    
-   
+    console.log("📦 Week Number from localStorage:", weekNumber);
+    console.log("📚 Enrolled Courses:", enrolledCourses);
+
     const formattedSummary = Object.entries(availability)
       .filter(([_, hours]) => hours > 0)
       .map(([day, hours]) => `${day}: ${hours} hour${hours > 1 ? "s" : ""}`)
       .join("\n");
-
     setSummary(formattedSummary);
 
     try {
-      const weekNumber = localStorage.getItem("weekNumber");
-      console.log(weekNumber)
-      const response = await fetch("http://localhost:5000/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          availability, // ✅ actual availability from frontend
-          grades: {
-            english: 5.5,
-            science: 9,
-            maths:1
+      let response;
+
+      if (weekNumber === 1) {
+        // ✅ Call /generic
+        console.log("📤 Calling /generic with enrolled courses:", enrolledCourses);
+        response = await fetch("http://localhost:5000/generic", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          weekNumber: parseInt(weekNumber),userId: userId,
-        }),
-      });
+          body: JSON.stringify({
+            availability,
+            enrollments: enrolledCourses,
+            weekNumber,
+            userId,
+          }),
+        });
+      } else {
+        // ✅ Call /generate
+        console.log("📤 Calling /generate instead (week > 1)");
+        response = await fetch("http://localhost:5000/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            availability,
+            grades: {
+              english: 5.5,
+              science: 9,
+              maths: 1,
+            },
+            weekNumber,
+            userId,
+          }),
+        });
+      }
+
       const data = await response.json();
       console.log("✅ Backend Response Message:", data.message);
       console.log("📅 Schedule Data:", data.scheduleData);
-     
-
-    
-
+      setScheduleData(data.scheduleData);
     } catch (error) {
       console.error("❌ Error reaching backend:", error);
-     
     }
   };
 
@@ -86,7 +106,6 @@ export default function Availability() {
           </div>
         ))}
 
-        {/* Summary Card */}
         <div className="day-card summary-card">
           <p>{summary || "No availability set"}</p>
         </div>
@@ -95,7 +114,6 @@ export default function Availability() {
       <button className="submit-button" onClick={handleSubmit}>
         Save Availability
       </button>
-
     </div>
   );
 }
