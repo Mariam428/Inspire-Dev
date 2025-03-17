@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./StudentDashboard.css";
+import useCalculateRemainingQuizzes from "../useCalculateRemainingQuizzes"; // ✅ import the hook
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Logout function
+  // ✅ Call the custom hook to update remainingQuizzes in localStorage
+  useCalculateRemainingQuizzes();
+
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     navigate("/Login");
   };
 
-  // Retrieve localStorage values
+  // Get localStorage values
   const email = localStorage.getItem("email");
-  const student_name = localStorage.getItem("name") || "Student"; 
+  const student_name = localStorage.getItem("name") || "Student";
   const weekNumber = localStorage.getItem("weekNumber");
   const userId = localStorage.getItem("userId");
 
@@ -22,8 +26,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [animatedName, setAnimatedName] = useState([]);
+  const [remainingQuizzes, setRemainingQuizzes] = useState([]);
 
-  // Fetch tasks
+  // Fetch study tasks
   useEffect(() => {
     const fetchTasks = async () => {
       if (!userId || !weekNumber) {
@@ -70,24 +75,30 @@ const Dashboard = () => {
     }
   }, [student_name]);
 
+  // ✅ Load remaining quizzes from localStorage
+  useEffect(() => {
+    const remaining = JSON.parse(localStorage.getItem("remainingQuizzes") || "[]");
+    setRemainingQuizzes(remaining);
+  }, []);
+
   return (
     <div className="dashboard-container">
-      {/* Header Section */}
+      {/* Header */}
       <div className="dashboard-header">
         <h1>Dashboard</h1>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* Welcome Section */}
+      {/* Welcome */}
       <div className="welcome-card">
         <h2 className="animated-header">
-          <span className="welcome">Welcome Back , </span> 
+          <span className="welcome">Welcome Back , </span>
           {animatedName}
         </h2>
         <p>Your tasks for today</p>
       </div>
 
-      {/* Dashboard Grid */}
+      {/* Grid */}
       <div className="dashboard-grid">
         
         {/* Study Section */}
@@ -121,7 +132,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Quizzes Section */}
+        {/* ✅ Quizzes Section */}
         <div className="section-card quizzes">
           <div className="section-header">
             <span>
@@ -130,7 +141,16 @@ const Dashboard = () => {
             <h2>Quizzes</h2>
           </div>
           <div>
-            <p>No quizzes for today.</p>
+            {remainingQuizzes.length > 0 ? (
+              remainingQuizzes.map((subject, index) => (
+                <div key={index} className="course-card">
+                  <h3>{subject}</h3>
+                  <p>Quiz not submitted yet.</p>
+                </div>
+              ))
+            ) : (
+              <p>No quizzes for today.</p>
+            )}
           </div>
         </div>
 

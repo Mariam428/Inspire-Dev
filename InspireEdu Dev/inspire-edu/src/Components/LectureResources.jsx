@@ -81,7 +81,8 @@ export default function LectureResources() {
 
         if (gradesRes.status === 200) {
             const updatedGrades = gradesRes.data;
-            //localStorage.setItem("currentWeekGrades", JSON.stringify(updatedGrades));
+            
+            localStorage.setItem("currentquizGrades", JSON.stringify(updatedGrades));
 
             console.log("✅ Updated quiz grades saved to localStorage:", updatedGrades);
         } else {

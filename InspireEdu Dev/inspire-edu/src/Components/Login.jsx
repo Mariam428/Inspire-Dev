@@ -54,7 +54,7 @@ const Login = () => {
         console.error("Failed to fetch enrolled courses:", enrolledData.error);
       }
 
-      // ✅ Fetch quiz grades of previous week, i dont need current week now
+      // ✅ Fetch quiz grades of previous week, i dont need current week now for plan
       const userId = data.userId;
       const weekNumber = localStorage.getItem("weekNumber");
       //week number -1
@@ -65,12 +65,26 @@ const Login = () => {
       const gradesData = await gradesRes.json();
 
       if (gradesRes.ok) {
-        console.log("✅ Quiz Grades:", gradesData);
+        console.log("✅previous Quiz Grades:", gradesData);
         localStorage.setItem("quizGrades", JSON.stringify(gradesData));
       } else {
         console.warn("⚠️ No quiz grades found:", gradesData.error);
       }
+      //Fetch grades of current week for Dashboard
+      //
+      //
+      const grades = await fetch(
+        `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
+      );
+      const gradesDatacurrent = await grades.json();
 
+      if (gradesRes.ok) {
+        console.log("✅current Quiz Grades:", gradesData);
+        localStorage.setItem("currentquizGrades", JSON.stringify(gradesDatacurrent ));
+      } else {
+        console.warn("⚠️ No quiz grades found:", gradesDatacurrent .error);
+      }
+      
       // Navigate based on role
       if (data.role === "student") {
         navigate("/student-dashboard");
