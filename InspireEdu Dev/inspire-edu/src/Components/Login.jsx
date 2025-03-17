@@ -54,36 +54,37 @@ const Login = () => {
         console.error("Failed to fetch enrolled courses:", enrolledData.error);
       }
 
-      // ✅ Fetch quiz grades of previous week, i dont need current week now for plan
       const userId = data.userId;
-      const weekNumber = localStorage.getItem("weekNumber");
-      //week number -1
-      
-      const gradesRes = await fetch(
-        `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
-      );
-      const gradesData = await gradesRes.json();
+const weekNumber = parseInt(localStorage.getItem("weekNumber"));
 
-      if (gradesRes.ok) {
-        console.log("✅previous Quiz Grades:", gradesData);
-        localStorage.setItem("quizGrades", JSON.stringify(gradesData));
-      } else {
-        console.warn("⚠️ No quiz grades found:", gradesData.error);
-      }
-      //Fetch grades of current week for Dashboard
-      //
-      //
-      const grades = await fetch(
-        `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
-      );
-      const gradesDatacurrent = await grades.json();
+// ✅ Fetch previous week grades only if weekNumber > 1
+if (weekNumber > 1) {
+  const prevGradesRes = await fetch(
+    `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber - 1}`
+  );
+  const prevGradesData = await prevGradesRes.json();
 
-      if (gradesRes.ok) {
-        console.log("✅current Quiz Grades:", gradesData);
-        localStorage.setItem("currentquizGrades", JSON.stringify(gradesDatacurrent ));
-      } else {
-        console.warn("⚠️ No quiz grades found:", gradesDatacurrent .error);
-      }
+  if (prevGradesRes.ok) {
+    console.log("✅ Previous Week Quiz Grades:", prevGradesData);
+    localStorage.setItem("quizGrades", JSON.stringify(prevGradesData));
+  } else {
+    console.warn("⚠️ No quiz grades found for previous week:", prevGradesData.error);
+  }
+}
+
+// ✅ Fetch current week grades (for dashboard)
+const currentGradesRes = await fetch(
+  `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
+);
+const currentGradesData = await currentGradesRes.json();
+
+if (currentGradesRes.ok) {
+  console.log("✅ Current Week Quiz Grades:", currentGradesData);
+  localStorage.setItem("currentquizGrades", JSON.stringify(currentGradesData));
+} else {
+  console.warn("⚠️ No quiz grades found for current week:", currentGradesData.error);
+}
+
       
       // Navigate based on role
       if (data.role === "student") {
