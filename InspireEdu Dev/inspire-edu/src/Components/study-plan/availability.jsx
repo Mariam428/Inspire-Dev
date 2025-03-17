@@ -41,7 +41,7 @@ export default function Availability() {
     try {
       let response;
 
-      if (weekNumber === 0) {
+      if (weekNumber === 1) {
         // ✅ Call /generic
         console.log("📤 Calling /generic with enrolled courses:", enrolledCourses);
         response = await fetch("http://localhost:5000/generic", {
