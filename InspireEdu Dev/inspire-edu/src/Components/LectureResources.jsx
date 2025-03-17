@@ -1,4 +1,3 @@
-// LectureResources.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -13,7 +12,9 @@ export default function LectureResources() {
     const [userAnswers, setUserAnswers] = useState({});
     const [quizSubmitted, setQuizSubmitted] = useState(false);
     const [score, setScore] = useState(0);
+    const [previousScore, setPreviousScore] = useState(null); // ✅ New state for previous score
     const [showQuizPopup, setShowQuizPopup] = useState(false);
+    const [quizError, setQuizError] = useState(null);
 
     useEffect(() => {
         const fetchResources = async () => {
@@ -44,17 +45,42 @@ export default function LectureResources() {
                 params: {
                     subject: subjectName,
                     lectureNumber: lectureName,
+                    userId: localStorage.getItem("userId"),
+                    weekNumber: localStorage.getItem("weekNumber"),
                 },
             });
+
+            if (response.data.alreadySubmitted) {
+                setQuizError("You've already submitted this quiz.");
+                setPreviousScore(response.data.previousScore);
+                setShowQuizPopup(true);
+                return;
+            }
+
             setQuizQuestions(response.data);
-            setShowQuizPopup(true); // Show the quiz popup
+            setShowQuizPopup(true);
+            setQuizError(null);
+            setPreviousScore(null);
         } catch (error) {
-            console.error("Error fetching quiz questions", error);
+            if (error.response && error.response.status === 409) {
+                setQuizError("You've already submitted this quiz.");
+                const prevScore = error.response.data?.previousScore;
+                if (prevScore !== undefined) {
+                    setPreviousScore(prevScore);
+                    setShowQuizPopup(true);
+                }
+            } else {
+                console.error("Error fetching quiz questions", error);
+                setQuizError("Error fetching quiz questions. Please try again.");
+            }
         }
     };
 
-    const handleAnswerChange = (questionIndex, answer) => {
-        setUserAnswers({ ...userAnswers, [questionIndex]: answer });
+    const handleAnswerChange = (index, option) => {
+        setUserAnswers((prevAnswers) => ({
+            ...prevAnswers,
+            [index]: option,
+        }));
     };
 
     const handleSubmitQuiz = async (e) => {
@@ -64,33 +90,30 @@ export default function LectureResources() {
 
         try {
             const response = await axios.post("http://localhost:5000/submit-quiz", {
-                userAnswers: Object.values(userAnswers), // Convert answers to an array
-                subject: subjectName, // Send subject name
-                lectureNumber: lectureName, // Send lecture number
+                userAnswers: Object.values(userAnswers),
+                subject: subjectName,
+                lectureNumber: lectureName,
                 userId: userId,
                 weekNumber: parseInt(weekNumber),
             });
 
-            // Set quiz results
             setScore(response.data.score);
             setQuizSubmitted(true);
-            // ✅ Fetch updated grades after submission
-        const gradesRes = await axios.get(
-            `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
-        );
 
-        if (gradesRes.status === 200) {
-            const updatedGrades = gradesRes.data;
-            
-            localStorage.setItem("currentquizGrades", JSON.stringify(updatedGrades));
+            const gradesRes = await axios.get(
+                `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
+            );
 
-            console.log("✅ Updated quiz grades saved to localStorage:", updatedGrades);
-        } else {
-            console.warn("⚠️ Failed to fetch updated quiz grades.");
-        }
+            if (gradesRes.status === 200) {
+                const updatedGrades = gradesRes.data;
+                localStorage.setItem("currentquizGrades", JSON.stringify(updatedGrades));
+                console.log("✅ Updated quiz grades saved to localStorage:", updatedGrades);
+            } else {
+                console.warn("⚠️ Failed to fetch updated quiz grades.");
+            }
         } catch (error) {
             console.error("Error submitting quiz:", error);
-            alert("Failed to submit quiz. Please try again.");
+            setQuizError("Failed to submit quiz. Please try again.");
         }
     };
 
@@ -99,6 +122,7 @@ export default function LectureResources() {
         setQuizSubmitted(false);
         setUserAnswers({});
         setScore(0);
+        setPreviousScore(null);
     };
 
     return (
@@ -133,6 +157,13 @@ export default function LectureResources() {
                             )}
                         </div>
                     ))}
+
+                    {quizError && (
+                        <div className="quiz-alert">
+                            {quizError}
+                        </div>
+                    )}
+
                     <button onClick={handleQuizButtonClick} className="quiz-button">
                         Start Quiz
                     </button>
@@ -145,33 +176,40 @@ export default function LectureResources() {
                 <div className="quiz-popup-overlay">
                     <div className="quiz-popup">
                         <h2>Quiz</h2>
-                        <form onSubmit={handleSubmitQuiz}>
-                            <div className="quiz-questions-container">
-                                {quizQuestions.map((question, index) => (
-                                    <div key={index} className="quiz-question">
-                                        <p>{question.question}</p>
-                                        {question.options.map((option, i) => (
-                                            <label key={i}>
-                                                <input
-                                                    type="radio"
-                                                    name={`question-${index}`}
-                                                    value={option}
-                                                    onChange={() => handleAnswerChange(index, option)}
-                                                    disabled={quizSubmitted}
-                                                />
-                                                {option}
-                                            </label>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                            <button type="submit" className="submit-quiz-button" disabled={quizSubmitted}>
-                                Submit
-                            </button>
-                        </form>
-                        {quizSubmitted && (
+                        {quizQuestions.length > 0 && (
+                            <form onSubmit={handleSubmitQuiz}>
+                                <div className="quiz-questions-container">
+                                    {quizQuestions.map((question, index) => (
+                                        <div key={index} className="quiz-question">
+                                            <p>{question.question}</p>
+                                            {question.options.map((option, i) => (
+                                                <label key={i}>
+                                                    <input
+                                                        type="radio"
+                                                        name={`question-${index}`}
+                                                        value={option}
+                                                        onChange={() => handleAnswerChange(index, option)}
+                                                        disabled={quizSubmitted || previousScore !== null}
+                                                    />
+                                                    {option}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                                <button type="submit" className="submit-quiz-button" disabled={quizSubmitted || previousScore !== null}>
+                                    Submit
+                                </button>
+                            </form>
+                        )}
+
+                        {(quizSubmitted || previousScore !== null) && (
                             <div className="quiz-result">
-                                <p>Your score: {score} / {quizQuestions.length}</p>
+                                {quizSubmitted ? (
+                                    <p>Your score: {score} / {quizQuestions.length}</p>
+                                ) : (
+                                    <p>Your previous score: {previousScore}</p>
+                                )}
                                 <button onClick={closeQuizPopup} className="close-quiz-button">
                                     Close
                                 </button>

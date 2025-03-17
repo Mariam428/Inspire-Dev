@@ -10,6 +10,17 @@ html, body {
     background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
     color: #2d2d2d;
   }
+  /* LectureContent.css */
+.quiz-alert {
+  background-color: #ffe6e6;
+  color: #b30000;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ffcccc;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
   
   /* Main Container */
   .resources-container {

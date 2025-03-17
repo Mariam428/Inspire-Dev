@@ -518,258 +518,227 @@ app.get("/lectures/:subject", async (req, res) => {
 const { ConnectionPoolClosedEvent } = require("mongodb");
 // 🔹 Route to Fetch Quiz Questions from PDF
 const { PdfReader } = require("pdfreader");
-
-app.get("/quiz-questions", async (req, res) => {
-  try {
-      const { subject, lectureNumber } = req.query;
-
-      if (!subject || !lectureNumber) {
-          return res.status(400).json({ error: "Subject and lecture number are required" });
-      }
-
-      // Normalize subject and lecture number
-      const formattedSubject = subject.trim().toUpperCase();
-      const formattedLecture = !isNaN(lectureNumber)
-          ? `LECTURE ${lectureNumber}`
-          : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
-
-      // Fetch the resource to get the quiz path
-      const resource = await Resource.findOne({ subject: formattedSubject, lectureNumber: formattedLecture });
-      console.log("Fetched resource from DB:", resource);
-
-      if (!resource || !resource.quizPath) {
-          return res.status(404).json({ error: "Quiz not found for this lecture" });
-      }
-
-      // Read and parse the PDF
-      const quizPath = path.join(__dirname, resource.quizPath);
-      console.log("Quiz Path:", quizPath); // Log the quiz path
-
-      if (!fs.existsSync(quizPath)) {
-          console.error("Quiz file does not exist:", quizPath);
-          return res.status(404).json({ error: "Quiz file not found" });
-      }
-
-      const dataBuffer = fs.readFileSync(quizPath);
-      const pdfData = await pdfParse(dataBuffer);
-      const pdfText = pdfData.text;
-
-      // Extract questions and options
-      const questionBlocks = pdfText.split("---"); // Split by the separator
-      const questions = [];
-
-      questionBlocks.forEach((block) => {
-          const lines = block.split("\n").map((line) => line.trim()).filter((line) => line !== "");
-          if (lines.length === 0) return;
-
-          // Extract question number and text
-          const questionLine = lines[0];
-          const questionNumberMatch = questionLine.match(/(\d+)\./);
-          if (!questionNumberMatch) return;
-
-          const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
-
-          // Extract options
-          const options = [];
-          let correctAnswer = null;
-
-          for (let i = 1; i < lines.length; i++) {
-              if (lines[i].match(/^[A-D]\)/)) { // Match options like "A)", "B)", etc.
-                  options.push(lines[i]);
-              } else if (lines[i].startsWith("**Answer:**")) {
-                  // Extract the correct answer
-                  correctAnswer = lines[i].replace("**Answer:**", "").trim();
-              }
-          }
-
-          // Add the question to the list
-          questions.push({
-              question: questionText,
-              options: options,
-              correctAnswer: correctAnswer, // Include the correct answer
-          });
-      });
-
-      res.json(questions);
-  } catch (error) {
-      console.error("Error fetching quiz questions:", error);
-      res.status(500).json({ error: "Failed to fetch quiz questions" });
-  }
+// 🔸 Mongoose Schemas
+const SubmittedQuizSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  subject: { type: String, required: true },
+  lectureNumber: { type: String, required: true },
+  
 });
-// models/QuizScore.js
+SubmittedQuizSchema.index({ userId: 1, subject: 1, lectureNumber: 1 }, { unique: true });
+const SubmittedQuiz = mongoose.model("SubmittedQuiz", SubmittedQuizSchema);
 
 const QuizScoreSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   weekNumber: { type: String, required: true },
   scores: { type: mongoose.Schema.Types.Mixed, required: true }
 });
-
 QuizScoreSchema.index({ userId: 1, weekNumber: 1 }, { unique: true });
-
-module.exports = mongoose.model("QuizScore", QuizScoreSchema);
-
-
-
 const QuizScore = mongoose.model("QuizScore", QuizScoreSchema);
 
-app.post("/submit-quiz", async (req, res) => {
-    try {
-        const { userAnswers, subject, lectureNumber, userId, weekNumber } = req.body;
 
-        console.log("✅ Received quiz submission:", req.body);
 
-        // 🔸 Validate required fields
-        if (!userId || !weekNumber || !subject || !userAnswers) {
-            return res.status(400).json({ error: "Missing required fields in submission." });
-        }
-
-        const formattedSubject = subject.trim().toUpperCase();
-        const formattedLecture = !isNaN(lectureNumber)
-            ? `LECTURE ${lectureNumber}`
-            : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
-
-        const resource = await Resource.findOne({
-            subject: formattedSubject,
-            lectureNumber: formattedLecture,
-        });
-
-        if (!resource || !resource.quizPath) {
-            return res.status(404).json({ error: "Quiz not found for this lecture." });
-        }
-
-        const quizPath = path.join(__dirname, resource.quizPath);
-        const dataBuffer = fs.readFileSync(quizPath);
-        const pdfData = await pdfParse(dataBuffer);
-
-        if (!pdfData || !pdfData.text) {
-            return res.status(500).json({ error: "Failed to extract text from quiz PDF." });
-        }
-
-        // 🔹 Extract correct answers
-        const questionBlocks = pdfData.text.split("---");
-        let correctAnswers = {};
-
-        questionBlocks.forEach((block) => {
-            const lines = block
-                .split("\n")
-                .map((line) => line.trim())
-                .filter((line) => line !== "");
-            if (lines.length === 0) return;
-
-            const questionLine = lines[0];
-            const questionNumberMatch = questionLine.match(/(\d+)\./);
-            if (!questionNumberMatch) return;
-
-            const questionNumber = questionNumberMatch[1];
-            const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
-
-            const options = [];
-            let correctAnswer = null;
-
-            for (let i = 1; i < lines.length; i++) {
-                if (/^[A-D]\)/.test(lines[i])) {
-                    options.push(lines[i]);
-                } else if (lines[i].startsWith("**Answer:**")) {
-                    correctAnswer = lines[i].replace("**Answer:**", "").trim();
-                }
-            }
-
-            correctAnswers[questionNumber - 1] = {
-                question: questionText,
-                options,
-                correctAnswer,
-            };
-        });
-
-        // 🔹 Calculate score
-        let score = 0;
-        Object.keys(userAnswers).forEach((questionIndex) => {
-            const userAnswer = userAnswers[questionIndex];
-            const correctAnswerData = correctAnswers[questionIndex];
-            if (correctAnswerData && userAnswer === correctAnswerData.correctAnswer) {
-                score++;
-            }
-        });
-
-        // 🔹 Save or update in MongoDB
-        let existingScore = await QuizScore.findOne({ userId, weekNumber });
-
-        if (existingScore) {
-            if (!existingScore.scores) existingScore.scores = {};
-            existingScore.scores[formattedSubject] = score;
-            await existingScore.save();
-        } else {
-            const newScore = new QuizScore({
-                userId,
-                weekNumber,
-                scores: {
-                    [formattedSubject]: score,
-                },
-            });
-            await newScore.save();
-        }
-
-        // 🔹 Save or update in temp_grades.json
-        // let tempData = {};
-        // if (fs.existsSync(tempGradesPath)) {
-        //     const fileContent = fs.readFileSync(tempGradesPath, "utf-8");
-        //     tempData = fileContent ? JSON.parse(fileContent) : {};
-        // }
-
-        if (!tempData[userId]) {
-            tempData[userId] = {};
-        }
-
-        if (!tempData[userId][weekNumber]) {
-            tempData[userId][weekNumber] = {};
-        }
-
-        tempData[userId][weekNumber][formattedSubject] = score;
-
-        
-
-        return res.json({
-            score,
-            total: Object.keys(correctAnswers).length,
-        });
-
-    } catch (error) {
-        console.error("❌ Error processing quiz submission:", error);
-        return res.status(500).json({ error: "Failed to process quiz." });
-    }
-});
-
-// fetch grades by week number
-app.get("/get-quiz-grades", async (req, res) => {
+// 🔹 /quiz-questions route
+app.get("/quiz-questions", async (req, res) => {
   try {
-      const { userId, weekNumber } = req.query;
+    const { subject, lectureNumber, userId } = req.query;
+    if (!subject || !lectureNumber || !userId) {
+      return res.status(400).json({ error: "Missing subject, lectureNumber, or userId" });
+    }
 
-      if (!userId || !weekNumber) {
-          return res.status(400).json({ error: "userId and weekNumber are required" });
-      }
+    const formattedSubject = subject.trim().toUpperCase();
+    const formattedLecture = !isNaN(lectureNumber)
+      ? `LECTURE ${lectureNumber}`
+      : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
 
-      // Find the document
-      const quizRecord = await QuizScore.findOne({ userId, weekNumber });
+    // ✅ Check if already submitted
+    const existingSubmission = await SubmittedQuiz.findOne({
+      userId,
+      subject: formattedSubject,
+      lectureNumber: formattedLecture,
+    });
 
-      if (!quizRecord) {
-          return res.status(404).json({ error: "No quiz scores found for this user and week." });
-      }
+    if (existingSubmission) {
+      return res.status(409).json({
+        message: "Quiz already submitted for this lecture by this user.",
+        alreadySubmitted: true,
+      });
+    }
 
-      // Filter only subject scores (exclude _id, userId, weekNumber, __v)
-      const { _id, userId: _, weekNumber: __, __v, ...subjectScores } = quizRecord.toObject();
+    // ✅ Pre-save submission record
+    const newSubmission = new SubmittedQuiz({
+      userId,
+      subject: formattedSubject,
+      lectureNumber: formattedLecture,
+    });
+    await newSubmission.save();
 
-      return res.json(subjectScores); // e.g., { "english": 5.5, "science": 9 }
-  } catch (err) {
-      console.error("Error fetching quiz grades:", err);
-      return res.status(500).json({ error: "Failed to fetch quiz grades" });
+    // ✅ Fetch quiz PDF
+    const resource = await Resource.findOne({
+      subject: formattedSubject,
+      lectureNumber: formattedLecture,
+    });
+
+    if (!resource || !resource.quizPath) {
+      return res.status(404).json({ error: "Quiz not found for this lecture." });
+    }
+
+    const quizPath = path.join(__dirname, resource.quizPath);
+    const dataBuffer = fs.readFileSync(quizPath);
+    const pdfData = await pdfParse(dataBuffer);
+
+    if (!pdfData || !pdfData.text) {
+      return res.status(500).json({ error: "Failed to extract text from quiz PDF." });
+    }
+
+    // ✅ Extract questions
+    const questionBlocks = pdfData.text.split("---");
+    const quizQuestions = [];
+
+    questionBlocks.forEach((block) => {
+      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+      if (lines.length === 0) return;
+
+      const questionLine = lines[0];
+      const questionNumberMatch = questionLine.match(/(\d+)\./);
+      if (!questionNumberMatch) return;
+
+      const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
+      const options = lines.slice(1).filter((line) => /^[A-D]\)/.test(line));
+
+      quizQuestions.push({
+        question: questionText,
+        options,
+      });
+    });
+
+    return res.json(quizQuestions);
+  } catch (error) {
+    console.error("❌ Error fetching quiz questions:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+// 🔹 /submit-quiz route
+app.post("/submit-quiz", async (req, res) => {
+  try {
+    const { userAnswers, subject, lectureNumber, userId, weekNumber } = req.body;
+    console.log("✅ Received quiz submission:", req.body);
 
+    if (!userId || !weekNumber || !subject || !userAnswers) {
+      return res.status(400).json({ error: "Missing required fields in submission." });
+    }
 
+    const formattedSubject = subject.trim().toUpperCase();
+    const formattedLecture = !isNaN(lectureNumber)
+      ? `LECTURE ${lectureNumber}`
+      : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
 
+    const resource = await Resource.findOne({
+      subject: formattedSubject,
+      lectureNumber: formattedLecture,
+    });
 
+    if (!resource || !resource.quizPath) {
+      return res.status(404).json({ error: "Quiz not found for this lecture." });
+    }
 
-// 🔹 Start Server
+    const quizPath = path.join(__dirname, resource.quizPath);
+    const dataBuffer = fs.readFileSync(quizPath);
+    const pdfData = await pdfParse(dataBuffer);
+
+    if (!pdfData || !pdfData.text) {
+      return res.status(500).json({ error: "Failed to extract text from quiz PDF." });
+    }
+
+    // ✅ Extract correct answers
+    const questionBlocks = pdfData.text.split("---");
+    let correctAnswers = {};
+
+    questionBlocks.forEach((block) => {
+      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+      if (lines.length === 0) return;
+
+      const questionLine = lines[0];
+      const questionNumberMatch = questionLine.match(/(\d+)\./);
+      if (!questionNumberMatch) return;
+
+      const questionNumber = questionNumberMatch[1];
+      const questionText = questionLine.replace(questionNumberMatch[0], "").trim();
+
+      const options = [];
+      let correctAnswer = null;
+
+      for (let i = 1; i < lines.length; i++) {
+        if (/^[A-D]\)/.test(lines[i])) {
+          options.push(lines[i]);
+        } else if (lines[i].startsWith("**Answer:**")) {
+          correctAnswer = lines[i].replace("**Answer:**", "").trim();
+        }
+      }
+
+      correctAnswers[questionNumber - 1] = {
+        question: questionText,
+        options,
+        correctAnswer,
+      };
+    });
+
+    // ✅ Score calculation
+    let score = 0;
+    Object.keys(userAnswers).forEach((qIndex) => {
+      const userAnswer = userAnswers[qIndex];
+      const correct = correctAnswers[qIndex];
+      if (correct && userAnswer === correct.correctAnswer) score++;
+    });
+
+    // ✅ Save/update in QuizScore collection
+    let existingScore = await QuizScore.findOne({ userId, weekNumber });
+
+    if (existingScore) {
+      existingScore.scores[formattedSubject] = score;
+      await existingScore.save();
+    } else {
+      await new QuizScore({
+        userId,
+        weekNumber,
+        scores: { [formattedSubject]: score },
+      }).save();
+    }
+
+    // ✅ (Optional) Save in temp_grades.json if needed — comment left out for brevity
+
+    return res.json({
+      score,
+      total: Object.keys(correctAnswers).length,
+    });
+  } catch (error) {
+    console.error("❌ Error processing quiz submission:", error);
+    return res.status(500).json({ error: "Failed to process quiz." });
+  }
+});
+
+// 🔹 /get-quiz-grades route
+app.get("/get-quiz-grades", async (req, res) => {
+  try {
+    const { userId, weekNumber } = req.query;
+    if (!userId || !weekNumber) {
+      return res.status(400).json({ error: "userId and weekNumber are required" });
+    }
+
+    const quizRecord = await QuizScore.findOne({ userId, weekNumber });
+    if (!quizRecord) {
+      return res.status(404).json({ error: "No quiz scores found." });
+    }
+
+    const { _id, userId: _, weekNumber: __, __v, ...subjectScores } = quizRecord.toObject();
+    return res.json(subjectScores);
+  } catch (err) {
+    console.error("Error fetching quiz grades:", err);
+    return res.status(500).json({ error: "Failed to fetch quiz grades" });
+  }
+});
+
+// 🔹 Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
