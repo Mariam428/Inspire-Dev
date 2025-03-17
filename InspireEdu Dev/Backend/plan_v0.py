@@ -13,9 +13,11 @@ def load_json_files():
 def compute_total_hours(availability):
     return sum(hours for hours in availability.values() if hours > 0)
 
+
 def calculate_mastery_levels(grades):
-    # Convert grades to mastery levels but ensure a floor (e.g., 0.1) for allocation logic
-    return {course: min(grade / 10.0, 1.0) for course, grade in grades.items()}
+    scores = grades["scores"]
+    return {course: min(score / 10.0, 1.0) for course, score in scores.items()}
+
 
 
 def map_mastery_to_needed_hours(mastery_levels, total_hours, min_weight=0.05):

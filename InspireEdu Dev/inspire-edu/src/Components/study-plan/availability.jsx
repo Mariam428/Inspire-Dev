@@ -26,6 +26,7 @@ export default function Availability() {
     const userId = localStorage.getItem("userId");
     const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
     const weekNumber = parseInt(localStorage.getItem("weekNumber"));
+    const quizGrades = JSON.parse(localStorage.getItem("quizGrades") || "{}");
 
     console.log("Selected Availability:", availability);
     console.log("📦 Week Number from localStorage:", weekNumber);
@@ -40,7 +41,7 @@ export default function Availability() {
     try {
       let response;
 
-      if (weekNumber === 1) {
+      if (weekNumber === 0) {
         // ✅ Call /generic
         console.log("📤 Calling /generic with enrolled courses:", enrolledCourses);
         response = await fetch("http://localhost:5000/generic", {
@@ -65,11 +66,7 @@ export default function Availability() {
           },
           body: JSON.stringify({
             availability,
-            grades: {
-              english: 5.5,
-              science: 9,
-              maths: 1,
-            },
+            grades: quizGrades,
             weekNumber,
             userId,
           }),

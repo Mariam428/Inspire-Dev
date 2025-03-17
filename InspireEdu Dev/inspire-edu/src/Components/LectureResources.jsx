@@ -59,17 +59,34 @@ export default function LectureResources() {
 
     const handleSubmitQuiz = async (e) => {
         e.preventDefault();
+        const userId = localStorage.getItem("userId");
+        const weekNumber = localStorage.getItem("weekNumber");
 
         try {
             const response = await axios.post("http://localhost:5000/submit-quiz", {
                 userAnswers: Object.values(userAnswers), // Convert answers to an array
                 subject: subjectName, // Send subject name
                 lectureNumber: lectureName, // Send lecture number
+                userId: userId,
+                weekNumber: parseInt(weekNumber),
             });
 
             // Set quiz results
             setScore(response.data.score);
             setQuizSubmitted(true);
+            // ✅ Fetch updated grades after submission
+        const gradesRes = await axios.get(
+            `http://localhost:5000/get-quiz-grades?userId=${userId}&weekNumber=${weekNumber}`
+        );
+
+        if (gradesRes.status === 200) {
+            const updatedGrades = gradesRes.data;
+            //localStorage.setItem("currentWeekGrades", JSON.stringify(updatedGrades));
+
+            console.log("✅ Updated quiz grades saved to localStorage:", updatedGrades);
+        } else {
+            console.warn("⚠️ Failed to fetch updated quiz grades.");
+        }
         } catch (error) {
             console.error("Error submitting quiz:", error);
             alert("Failed to submit quiz. Please try again.");

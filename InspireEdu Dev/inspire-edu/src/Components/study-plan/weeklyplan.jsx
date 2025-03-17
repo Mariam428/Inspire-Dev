@@ -3,27 +3,29 @@ import { useNavigate } from "react-router-dom";
 import "./Weeklyplan.css";
 
 export default function Setup() {
-    const [weekNumber, setWeekNumber] = useState(2);
+   // const [weekNumber, setWeekNumber] = useState(2);
     const navigate = useNavigate();
+    const weekNumber = localStorage.getItem("weekNumber");
+//Calculated at login
 
-    useEffect(() => {
-        // Get registration date from localStorage ///
-        const registrationDate = localStorage.getItem("registrationDate");
-        //////// VERY IMPORTANT ////////////
+    // useEffect(() => {
+    //     // Get registration date from localStorage ///
+    //     const registrationDate = localStorage.getItem("registrationDate");
+    //     //////// VERY IMPORTANT ////////////
         
-        if (registrationDate) {
-            const regDate = new Date(registrationDate);
-            const today = new Date();
+    //     if (registrationDate) {
+    //         const regDate = new Date(registrationDate);
+    //         const today = new Date();
             
-            // Calculate week difference
-            const timeDiff = today - regDate;
-            const weeksSinceRegistration = Math.floor(timeDiff / (7 * 24 * 60 * 60 * 1000)) + 1;
+    //         // Calculate week difference
+    //         const timeDiff = today - regDate;
+    //         const weeksSinceRegistration = Math.floor(timeDiff / (7 * 24 * 60 * 60 * 1000)) + 1;
 
-            setWeekNumber(weeksSinceRegistration);
-            localStorage.setItem("weekNumber", weeksSinceRegistration);
+    //         setWeekNumber(weeksSinceRegistration);
+    //         localStorage.setItem("weekNumber", weeksSinceRegistration);
 
-        }
-    }, []);
+    //     }
+    // }, []);
 
     return (
         <div className="page-container">
