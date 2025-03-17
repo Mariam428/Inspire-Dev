@@ -70,7 +70,7 @@ if (weekNumber > 1) {
   } else {
     console.warn("⚠️ No quiz grades found for previous week:", prevGradesData.error);
   }
-}
+}else { console.log(" NO Previous Week Quiz Grades:");}
 
 // ✅ Fetch current week grades (for dashboard)
 const currentGradesRes = await fetch(
