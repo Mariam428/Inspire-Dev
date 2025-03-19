@@ -523,15 +523,20 @@ const SubmittedQuizSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   subject: { type: String, required: true },
   lectureNumber: { type: String, required: true },
+  score: { type: Number, required: true },
+  total: { type: Number, required: true },
+  submissionDate: { type: Date, default: Date.now },
+  userAnswers: { type: Object, required: true },// 💡 Store as key-value pairs
   
 });
 SubmittedQuizSchema.index({ userId: 1, subject: 1, lectureNumber: 1 }, { unique: true });
 const SubmittedQuiz = mongoose.model("SubmittedQuiz", SubmittedQuizSchema);
-
+//for plan generation
 const QuizScoreSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   weekNumber: { type: String, required: true },
   scores: { type: mongoose.Schema.Types.Mixed, required: true }
+
 });
 QuizScoreSchema.index({ userId: 1, weekNumber: 1 }, { unique: true });
 const QuizScore = mongoose.model("QuizScore", QuizScoreSchema);
@@ -551,27 +556,30 @@ app.get("/quiz-questions", async (req, res) => {
       ? `LECTURE ${lectureNumber}`
       : lectureNumber.trim().replace(/lecture\s*/i, "LECTURE ");
 
-    // ✅ Check if already submitted
-    const existingSubmission = await SubmittedQuiz.findOne({
-      userId,
-      subject: formattedSubject,
-      lectureNumber: formattedLecture,
-    });
+ // ✅ Check if already submitted
+const existingSubmission = await SubmittedQuiz.findOne({
+  userId,
+  subject: formattedSubject,
+  lectureNumber: formattedLecture,
+});
 
-    if (existingSubmission) {
-      return res.status(409).json({
-        message: "Quiz already submitted for this lecture by this user.",
-        alreadySubmitted: true,
-      });
-    }
+if (existingSubmission) {
+  return res.status(409).json({
+    message: "Quiz already submitted for this lecture by this user.",
+    alreadySubmitted: true,
+    score: existingSubmission.score,
+    total: existingSubmission.total,
+  });
+}
 
-    // ✅ Pre-save submission record
-    const newSubmission = new SubmittedQuiz({
-      userId,
-      subject: formattedSubject,
-      lectureNumber: formattedLecture,
-    });
-    await newSubmission.save();
+
+    // // ✅ Pre-save submission record
+    // const newSubmission = new SubmittedQuiz({
+    //   userId,
+    //   subject: formattedSubject,
+    //   lectureNumber: formattedLecture,
+    // });
+    // await newSubmission.save();
 
     // ✅ Fetch quiz PDF
     const resource = await Resource.findOne({
@@ -692,7 +700,7 @@ app.post("/submit-quiz", async (req, res) => {
       if (correct && userAnswer === correct.correctAnswer) score++;
     });
 
-    // ✅ Save/update in QuizScore collection
+    // ✅ Save/update in QuizScore collection this part works well
     let existingScore = await QuizScore.findOne({ userId, weekNumber });
 
     if (existingScore) {
@@ -705,6 +713,18 @@ app.post("/submit-quiz", async (req, res) => {
         scores: { [formattedSubject]: score },
       }).save();
     }
+    // ✅ save submission record
+    
+   
+    await new SubmittedQuiz({
+      userId,
+      subject: formattedSubject,
+      lectureNumber: formattedLecture,
+      score,
+      total: Object.keys(correctAnswers).length,
+      submissionDate: new Date(),
+      userAnswers
+    }).save();
 
     // ✅ (Optional) Save in temp_grades.json if needed — comment left out for brevity
 
