@@ -1,0 +1,131 @@
+/* Full Page Reset and Smooth Scroll */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  /* Main Container */
+  .performance-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(to bottom, #fdf9f6, #f0f6fc);
+    color: #2d2d2d;
+    box-sizing: border-box;
+  }
+  
+  /* Title Styling */
+  .performance-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #2b6cb0, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 5px rgba(96, 165, 250, 0.25);
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 2.5rem;
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  /* Loading and Error Text */
+  .performance-loading,
+  .performance-error,
+  .performance-message {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .performance-error {
+    color: #dc2626;
+    font-weight: 600;
+  }
+  
+  /* Card Layout */
+  .performance-weeks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    max-width: 1000px;
+    width: 100%;
+    animation: fadeSlideIn 0.6s ease-out forwards;
+  }
+  
+  /* Individual Week Card */
+  .performance-week-card {
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    border: 2px solid #bfdbfe;
+    background: linear-gradient(135deg, #e0f2fe, #f0f6fc);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeSlideIn 0.6s ease-out forwards;
+  }
+  
+  .performance-week-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Week Title */
+  .performance-week-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+  }
+  
+  /* Score List */
+  .performance-score-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .performance-score-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0.8rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #dbeafe;
+  }
+  
+  /* Subject Name and Score */
+  .subject-name {
+    font-weight: 600;
+    color: #1d4ed8;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .subject-score {
+    color: #1e40af;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Animation */
+  @keyframes fadeSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

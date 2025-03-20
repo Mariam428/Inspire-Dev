@@ -19,6 +19,7 @@ import Videos from "./Components/Videos";
 import VideoContent from "./Components/VideoContent";
 import Courses from "./Components/Courses";
 import AddCourses from "./Components/AddCourse";
+import Performance from "./Components/Performance";
 
 
 import "./App.css";     
@@ -61,6 +62,8 @@ function Layout() {
           <Route path="/video-content/:subjectName/:videoName" element={<VideoContent />} />
           <Route path="/Register-Course" element={<Courses />} />
           <Route path="/Add-Course" element={<AddCourses />} />
+          <Route path="/Performance" element={<Performance/>} />
+
 
 
           {/* Protected Routes for Students */}

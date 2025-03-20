@@ -759,6 +759,33 @@ app.get("/get-quiz-grades", async (req, res) => {
   }
 });
 
+// GET all quiz scores for a user across all weeks
+app.get("/get-all-scores", async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ message: "Missing userId" });
+    }
+
+    const userScores = await QuizScore.find({ userId });
+
+    // ✔ Return an empty array if no scores found — no error thrown
+    const result = (userScores || []).map((entry) => ({
+      weekNumber: entry.weekNumber,
+      scores: entry.scores,
+    }));
+
+    res.status(200).json(result); // always success response
+  } catch (error) {
+    console.error("Error fetching all scores:", error);
+    res.status(500).json({ message: "Server error while fetching scores" });
+  }
+});
+
+
+
+
 // 🔹 Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

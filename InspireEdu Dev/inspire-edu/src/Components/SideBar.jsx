@@ -9,7 +9,7 @@ const sidebarItems = [
   { title: "Resources", icon: "/icons/notes_4898396.png", path: "/resources" },
   { title: "Study Plan", icon: "/icons/task_2098313.png", path: "/study-plan/weeklyplan" },
   // { title: "Chat", icon: "/icons/chat_589708.png", path: "/chat" },
-  { title: "Performance", icon: "/icons/graph_2815158.png", path: "/Preformance" },
+  { title: "Performance", icon: "/icons/graph_2815158.png", path: "/Performance" },
   {title: "Course Registeration", icon: "/icons/resume_14354165.png", path: "/Register-Course" }
 ];
 
@@ -19,7 +19,7 @@ const SideBar = () => {
       {/* Logo Section */}
       <div className="logo">
         <img src="light.png" alt="Logo" />
-        <h2>InspireEdu</h2>
+        <h2>InspireEd</h2>
       </div>
 
       {/* Sidebar Items with Navigation */}
