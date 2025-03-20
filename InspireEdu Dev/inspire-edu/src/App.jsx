@@ -20,6 +20,7 @@ import VideoContent from "./Components/VideoContent";
 import Courses from "./Components/Courses";
 import AddCourses from "./Components/AddCourse";
 import Performance from "./Components/Performance";
+import Popup from "./Components/PopUp";
 
 
 import "./App.css";     

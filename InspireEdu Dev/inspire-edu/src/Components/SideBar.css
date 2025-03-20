@@ -1,100 +1,76 @@
-/* Sidebar Container */
 .side-container {
   width: 250px;
   height: 100vh;
-  background: linear-gradient(to bottom right, #f8fafc, #e0f2fe);
-  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
-  padding: 2rem 1.5rem;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-right: 1px solid #cbd5e1;
-  box-sizing: border-box;
 }
 
 /* Logo Section */
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 3rem;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
 .logo img {
-  width: 42px;
+  width: 40px;
   height: auto;
-}
-
-.logo-text {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  background: linear-gradient(to right, #1e3a8a, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 /* Menu Section */
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 30px;
   width: 100%;
 }
 
 /* Sidebar Menu Items */
 .menu-item {
-  text-decoration: none;
-  color: #334155;
-  display: flex;
+  text-decoration: none;  
+  color: #333;         
+  display: grid;
+  flex-direction:row;
   align-items: center;
-  gap: 14px;
-  padding: 0.75rem 1rem;
+  gap: 10px;
+  padding: 10px;
   width: 100%;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 5px;
 }
 
+/* Hover Effect */
 .menu-item:hover {
-  background: linear-gradient(to right, #dbeafe, #eff6ff);
-  color: #1e3a8a;
-  box-shadow: 0 4px 10px rgba(96, 165, 250, 0.15);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Active Menu Item */
+/* Active Link Styling */
 .menu-item.active {
-  background: linear-gradient(to right, #3b82f6, #60a5fa);
-  color: #ffffff;
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  background-color: #6690f3;
+  color: white; 
 }
 
-/* Menu Icons */
+/* Icons inside menu */
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
-  filter: grayscale(50%);
-  transition: filter 0.3s ease;
 }
 
-.menu-item:hover .icon {
-  filter: grayscale(0%);
-}
-
-/* Text in Sidebar Items */
-.menu-item h3 {
-  font-size: 1rem;
-  font-weight: 600;
+/* Sidebar Text */
+h3 {
+  font-size: 16px;
+  font-weight: 500;
   margin: 0;
-  font-family: 'Inter', sans-serif;
 }
 
-/* Icon Wrapper */
-.icon-container {
+.icon-container{
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  gap: 20px;
 }
