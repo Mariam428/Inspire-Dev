@@ -747,17 +747,20 @@ app.get("/get-quiz-grades", async (req, res) => {
     }
 
     const quizRecord = await QuizScore.findOne({ userId, weekNumber });
+    
     if (!quizRecord) {
-      return res.status(404).json({ error: "No quiz scores found." });
+      // ✅ Return empty scores instead of 404
+      return res.status(200).json({ scores: {} });
     }
 
     const { _id, userId: _, weekNumber: __, __v, ...subjectScores } = quizRecord.toObject();
-    return res.json(subjectScores);
+    return res.json({ scores: subjectScores }); // ✅ Wrap in scores
   } catch (err) {
     console.error("Error fetching quiz grades:", err);
     return res.status(500).json({ error: "Failed to fetch quiz grades" });
   }
 });
+
 
 // GET all quiz scores for a user across all weeks
 app.get("/get-all-scores", async (req, res) => {
