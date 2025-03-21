@@ -32,6 +32,7 @@ def generate_mcqs(api_key, text, num_questions=5):
     2. Add the difficulty level in parentheses, surrounded by asterisks, e.g., **(Easy)**, **(Medium)**, **(Hard)**.
     3. List the answer choices, each starting with A), B), C), D), etc., on separate lines.
     4. End with the correct answer in the format: **Answer:** X) Correct Answer.
+    5. Separate questions with ---
 
     Example:
     **1. What does the IoT equation "Physical Object + Controller, Sensor and Actuator + Internet" represent? (Easy)**
@@ -40,6 +41,7 @@ def generate_mcqs(api_key, text, num_questions=5):
     C) Cloud computing architecture
     D) Ambient Intelligence (AmI)
     **Answer:** B) Internet of Things (IoT)
+    ---
 
     Text: {text}
     """
