@@ -121,7 +121,7 @@ def save_quiz_to_pdf(quiz_path, mcqs):
     c.save()
     print(f"Quiz saved to {quiz_path}")
 
-def main(pdf_path, quiz_path, api_key, num_questions=5):
+def main(pdf_path, quiz_path, api_key, num_questions=10):
     # Step 1: Extract text from PDF
     pdf_text = extract_text_from_pdf(pdf_path)
 
