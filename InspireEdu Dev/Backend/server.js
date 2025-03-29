@@ -148,7 +148,8 @@ app.post("/generate", async (req, res) => {
 
   // Save availability and grades as temp JSON files
   fs.writeFileSync("temp_availability.json", JSON.stringify(availability));
-  fs.writeFileSync("temp_grades.json", JSON.stringify(grades));
+  fs.writeFileSync("temp_grades.json", JSON.stringify({ scores: grades.scores }));
+
   fs.writeFileSync("temp_weeknumber.json", JSON.stringify({ weekNumber }));
 
   //const pythonScriptPath = path.join(__dirname, "plan_v0.py");
@@ -280,10 +281,13 @@ app.get("/plan", async (req, res) => {
     const plan = await WeeklyStudyPlan.findOne({ userId, weekNumber });
 
     if (!plan) {
-      return res.status(404).json({ message: "No plan found for this week" });
+      return res.status(200).json({ 
+        message: "No plan found for this week", 
+        studyPlan: {} 
+      });
     }
 
-    res.json({
+    res.status(200).json({
       message: "Study plan fetched successfully",
       studyPlan: plan.studyPlan,
     });
@@ -292,6 +296,7 @@ app.get("/plan", async (req, res) => {
     res.status(500).json({ message: "Server error while fetching plan" });
   }
 });
+
 
 
 
@@ -738,7 +743,6 @@ app.post("/submit-quiz", async (req, res) => {
   }
 });
 
-// 🔹 /get-quiz-grades route
 app.get("/get-quiz-grades", async (req, res) => {
   try {
     const { userId, weekNumber } = req.query;
@@ -747,19 +751,19 @@ app.get("/get-quiz-grades", async (req, res) => {
     }
 
     const quizRecord = await QuizScore.findOne({ userId, weekNumber });
-    
+
     if (!quizRecord) {
       // ✅ Return empty scores instead of 404
       return res.status(200).json({ scores: {} });
     }
 
-    const { _id, userId: _, weekNumber: __, __v, ...subjectScores } = quizRecord.toObject();
-    return res.json({ scores: subjectScores }); // ✅ Wrap in scores
+    return res.json({ scores: quizRecord.scores }); // ✅ Directly return scores
   } catch (err) {
     console.error("Error fetching quiz grades:", err);
     return res.status(500).json({ error: "Failed to fetch quiz grades" });
   }
 });
+
 
 
 // GET all quiz scores for a user across all weeks

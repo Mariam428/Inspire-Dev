@@ -171,7 +171,7 @@ export default function LectureResources() {
                     <div className="quiz-popup">
                         {quizAlreadySubmitted ? (
                             <>
-                                <h2 style={{ color: "black", fontWeight: "bold" }}>Quiz Already Submitted</h2>
+                                <h2 style={{ color: "black", fontWeight: "bold" }}> Already Submitted</h2>
                                 {previousScore && (
                                     <p style={{ fontSize: "18px", marginTop: "10px" }}>
                                         Your previous score: <strong>{previousScore.score}</strong> / <strong>{previousScore.total}</strong>

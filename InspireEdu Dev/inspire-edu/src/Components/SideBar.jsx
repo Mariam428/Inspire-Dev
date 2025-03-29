@@ -19,7 +19,7 @@ const SideBar = () => {
       {/* Logo Section */}
       <div className="logo">
         <img src="light.png" alt="Logo" />
-        <h2>InspireEdu</h2>
+        <h2>InspireEd</h2>
       </div>
 
       {/* Sidebar Items with Navigation */}

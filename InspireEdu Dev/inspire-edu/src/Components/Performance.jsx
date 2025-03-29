@@ -13,6 +13,7 @@ export default function Performance() {
         const userId = localStorage.getItem("userId");
         const response = await axios.get(`http://localhost:5000/get-all-scores?userId=${userId}`);
         setAllScores(response.data);
+        console.log("🔹 Backend Response:", response.data); // ✅ Log the response
       } catch (err) {
         console.error("Error fetching performance scores:", err);
         setError("Failed to load performance data.");
