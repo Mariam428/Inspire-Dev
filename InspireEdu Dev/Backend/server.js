@@ -21,14 +21,63 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
     .then(() => console.log("✅ MongoDB Connected"))
     .catch(err => console.log("❌ MongoDB Connection Error:", err));
 
-// 🔹 User Schema
+// Update the UserSchema to include educatorCourses
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["student", "educator"], required: true },
-  registrationDate: { type: Date, default: Date.now }
+  registrationDate: { type: Date, default: Date.now },
+  educatorCourses: [String]
 });
+
+
+
+
+const EducatorCourse = require("./EducatorCourse"); // import this at the top
+
+// Update the register endpoint
+app.post("/register", async (req, res) => {
+  const { name, email, password, role, educatorCourses } = req.body;
+
+  if (!name || !email || !password || !role) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (role === "educator" && (!educatorCourses || !Array.isArray(educatorCourses))) {
+    return res.status(400).json({ error: "Educator must select at least one course" });
+  }
+
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ error: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Convert course IDs to names
+    let courseNames = [];
+    if (role === "educator") {
+      const courses = await Course.find({ _id: { $in: educatorCourses } });
+      courseNames = courses.map(course => course.name);
+    }
+
+    const newUser = new User({ 
+      name, 
+      email, 
+      password: hashedPassword, 
+      role,
+      educatorCourses: role === "educator" ? courseNames : []
+    });
+
+    await newUser.save();
+    res.json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error, try again later" });
+  }
+});
+
+
 
 const User = mongoose.model("User", UserSchema);
 //enrollement schema
@@ -104,14 +153,19 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 // const fs = require("fs");
 // const { exec } = require("child_process");
 // const path = require("path");
-// 🔹 Course Schema
-const CourseSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  color: { type: String, required: true },
-  textColor: { type: String, required: true },
-  borderColor: { type: String, required: true }
+
+
+
+
+const courseSchema = new mongoose.Schema({
+  name: String,
+  code: String,
+  educators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // 🔥 New field
 });
-const Course = mongoose.model("Course", CourseSchema);
+
+module.exports = mongoose.model("Course", courseSchema);
+
+const Course = mongoose.model("Course", courseSchema);
 module.exports = Course;
 app.use(cors());
 app.use(express.json());
@@ -310,27 +364,76 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// 🔹 Register User API
-app.post("/register", async (req, res) => {
-    const { name, email, password, role } = req.body;
-
-    if (!name || !email || !password || !role) {
-        return res.status(400).json({ error: "All fields are required" });
+// 🔹 Get Courses Assigned to Educator by Email
+// Get educator's courses by email
+app.get("/educator-courses/:email", async (req, res) => {
+  try {
+    const educator = await User.findOne({ 
+      email: req.params.email,
+      role: "educator" 
+    });
+    
+    if (!educator) {
+      return res.status(404).json({ error: "Educator not found" });
     }
 
-    try {
-        const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ error: "User already exists" });
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword, role });
-        await newUser.save();
-
-        res.json({ message: "User registered successfully" });
-    } catch (error) {
-        res.status(500).json({ error: "Server error, try again later" });
-    }
+    res.json({ courses: educator.educatorCourses });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch educator courses" });
+  }
 });
+
+/*Middleware to verify educator owns the course
+const verifyEducatorCourse = async (req, res, next) => {
+  try {
+    const educator = await User.findOne({
+      email: req.user.email, // Assuming JWT contains user email
+      role: "educator"
+    });
+
+    if (!educator.educatorCourses.includes(req.body.subject)) {
+      return res.status(403).json({ error: "Not authorized to modify this course" });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ error: "Authorization failed" });
+  }
+};*/
+
+
+
+
+app.post("/register", async (req, res) => {
+  const { name, email, password, role, courses } = req.body;
+
+  if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+      const userExists = await User.findOne({ email });
+      if (userExists) return res.status(400).json({ error: "User already exists" });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = new User({
+          name,
+          email,
+          password: hashedPassword,
+          role,
+          educatorCourses: role === "educator" ? courses : [], // Add this line
+      });
+
+      await newUser.save();
+
+      res.json({ message: "User registered successfully" });
+  } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ error: "Server error, try again later" });
+  }
+});
+
 
 // 🔹 Login API
 app.post("/login", async (req, res) => {
