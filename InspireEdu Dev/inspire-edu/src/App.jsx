@@ -6,15 +6,16 @@ import Register from "./Components/Register";
 import ForgotPassword from "./Components/ForgotPassword";
 import Resources from "./Components/Resources";
 import Lectures from "./Components/Lectures";
-import LectureContent from "./Components/LectureContent"; 
+import LectureContent from "./Components/LectureContent";
 import Setup from "./Components/study-plan/weeklyplan";
 import Grades from "./Components/study-plan/grades";
 import Availability from "./Components/study-plan/availability";
 import Schedule from "./Components/study-plan/schedule";
-import EducatorDashboard from "./Components/Teacher-Dashboard/TeacherDashboard"; 
-import ProtectedRoute from "./Components/ProtectedRoute"; 
+import EducatorDashboard from "./Components/Teacher-Dashboard/TeacherDashboard";
+import ProtectedRoute from "./Components/ProtectedRoute";
 import TeacherSidebar from "./Components/TeacherSideBar";
-import LectureResources from "./Components/LectureResources";import Classes from "./Components/Classes";
+import LectureResources from "./Components/LectureResources";
+import Classes from "./Components/Classes";
 import Videos from "./Components/Videos";
 import VideoContent from "./Components/VideoContent";
 import Courses from "./Components/Courses";
@@ -22,19 +23,19 @@ import AddCourses from "./Components/AddCourse";
 import Performance from "./Components/Performance";
 import Popup from "./Components/PopUp";
 
-
-import "./App.css";     
+import "./App.css";
 
 function Layout() {
   const location = useLocation();
-  
+
   // Hide sidebar on certain routes
   const hideSidebarRoutes = ["/login", "/register", "/forgot-password"];
   const showSidebar = !hideSidebarRoutes.includes(location.pathname.toLowerCase());
 
   // Get user role from localStorage
-  const userRole = localStorage.getItem("role");  
-
+  const userRole = localStorage.getItem("role");
+  const userEmail = localStorage.getItem("email"); // Get user email to check for admin
+  
   return (
     <div className="app-container">
       {/* Show Sidebar only on specific routes */}
@@ -62,10 +63,20 @@ function Layout() {
           <Route path="/videos/:subjectName" element={<Videos />} />
           <Route path="/video-content/:subjectName/:videoName" element={<VideoContent />} />
           <Route path="/Register-Course" element={<Courses />} />
-          <Route path="/Add-Course" element={<AddCourses />} />
-          <Route path="/Performance" element={<Performance/>} />
+          
+          <Route
+  path="/Add-Course"
+  element={
+    userEmail === "admin@gmail.com" ? (
+      <AddCourses />
+    ) : (
+      <Navigate to="/educator-dashboard" />
+    )
+  }
+/>
 
-
+          
+          <Route path="/Performance" element={<Performance />} />
 
           {/* Protected Routes for Students */}
           <Route element={<ProtectedRoute allowedRoles={["student"]} />}>

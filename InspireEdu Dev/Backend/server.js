@@ -383,26 +383,6 @@ app.get("/educator-courses/:email", async (req, res) => {
   }
 });
 
-/*Middleware to verify educator owns the course
-const verifyEducatorCourse = async (req, res, next) => {
-  try {
-    const educator = await User.findOne({
-      email: req.user.email, // Assuming JWT contains user email
-      role: "educator"
-    });
-
-    if (!educator.educatorCourses.includes(req.body.subject)) {
-      return res.status(403).json({ error: "Not authorized to modify this course" });
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).json({ error: "Authorization failed" });
-  }
-};*/
-
-
-
 
 app.post("/register", async (req, res) => {
   const { name, email, password, role, courses } = req.body;
@@ -438,25 +418,37 @@ app.post("/register", async (req, res) => {
 // 🔹 Login API
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: "Invalid email or password" });
-  }
+    }
 
-  // Generate JWT Token
-  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-  // Include the registration date with the response
-  res.json({ 
-      token, 
-      role: user.role,
-      registrationDate: user.registrationDate,
+    // Send user info including email (needed by frontend to detect admin)
+    res.json({
+      token,
+      userId: user._id,
       name: user.name,
       email: user.email,
-      userId: user._id 
-  });
+      role: user.role,
+      registrationDate: user.registrationDate
+    });
+
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Server error during login" });
+  }
 });
+
 
 // 🔹 API to Add a New Course
 const colors = [
@@ -546,7 +538,7 @@ app.post("/upload-resource", upload.single("file"), async (req, res) => {
       await newResource.save();
 
       // Generate summary using the Python script
-      const summaryPath = `uploads/summary_${req.file.filename}.pdf`;
+      const summaryPath = `uploads/summary_${req.file.filename}`;
       exec(
           `python summarize.py ${req.file.path} ${summaryPath}`,
           async (error, stdout, stderr) => {
@@ -557,30 +549,36 @@ app.post("/upload-resource", upload.single("file"), async (req, res) => {
 
               // Update the resource with the summary path
               newResource.summaryPath = `/${summaryPath}`;
+
+              // Modify the summaryPath to have a .html extension before saving it to the database
+              const modifiedSummaryPath = newResource.summaryPath.replace(".pdf", ".html");
+              newResource.summaryPath = modifiedSummaryPath;
+
+              // Save the updated resource with the modified summary path
               await newResource.save();
 
               // Generate quiz using the Python script
-            const quizPath = `uploads/quiz_${req.file.filename}.pdf`;
-            exec(
-                `python generate_quiz.py ${req.file.path} ${quizPath}`,
-                async (quizError, quizStdout, quizStderr) => {
-                    if (quizError) {
-                        console.error("Error generating quiz:", quizError);
-                        return res.status(500).json({ error: "Failed to generate quiz" });
-                    }
+              const quizPath = `uploads/quiz_${req.file.filename}`;
+              exec(
+                  `python generate_quiz.py ${req.file.path} ${quizPath}`,
+                  async (quizError, quizStdout, quizStderr) => {
+                      if (quizError) {
+                          console.error("Error generating quiz:", quizError);
+                          return res.status(500).json({ error: "Failed to generate quiz" });
+                      }
 
-                    // Update the resource with the quiz path
-                    newResource.quizPath = `/${quizPath}`; // Save the quiz path
-                    await newResource.save(); // Save the updated resource to the database
+                      // Update the resource with the quiz path
+                      newResource.quizPath = `/${quizPath}`; // Save the quiz path
+                      await newResource.save(); // Save the updated resource to the database
 
-                    res.json({
-                        message: "File uploaded, summary, and quiz generated successfully!",
-                        filePath,
-                        summaryPath,
-                        quizPath,
-                    });
-                }
-            );
+                      res.json({
+                          message: "File uploaded, summary, and quiz generated successfully!",
+                          filePath,
+                          summaryPath: modifiedSummaryPath, // Return the modified summary path
+                          quizPath,
+                      });
+                  }
+              );
           }
       );
   } catch (error) {
@@ -588,6 +586,7 @@ app.post("/upload-resource", upload.single("file"), async (req, res) => {
       res.status(500).json({ error: "Failed to upload file" });
   }
 });
+
 
 // 🔹 Route to Fetch Resources for a Lecture
 app.get("/resources/:subject/:lectureNumber", async (req, res) => {
