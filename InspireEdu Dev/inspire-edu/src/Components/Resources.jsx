@@ -5,6 +5,8 @@ import "./Resources.css";
 export default function Resources() {
   const navigate = useNavigate();
   const userRole = localStorage.getItem("role"); // Get user role
+  const userEmail = localStorage.getItem("email"); // Added to identify the educator
+  const authToken = localStorage.getItem("token"); // Added for authorization
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -12,16 +14,27 @@ export default function Resources() {
       try {
         let coursesData = [];
 
-        if (userRole === "educator") {
-          // Fetch all courses if the user is an educator
-          const response = await fetch("http://localhost:5000/courses"); // Adjust API URL
+        if (userRole === "administrator") {
+          // Fetch all courses if the user is an administrator
+          const response = await fetch("http://localhost:5000/courses");
           const data = await response.json();
-
           if (response.ok) {
             coursesData = data.map((course) => course.name); // Assuming courses have a 'name' field
           }
+        } else if (userRole === "educator") {
+          // Fetch only courses assigned to this educator
+          const response = await fetch(
+            `http://localhost:5000/educator-courses/${userEmail}`,
+            {
+              headers: { Authorization: `Bearer ${authToken}` }
+            }
+          );
+          const data = await response.json();
+          if (response.ok) {
+            coursesData = data.courses; // Based on structure in TeacherDashboard.jsx
+          }
         } else {
-          // Fetch only enrolled courses from localStorage
+          // Fetch only enrolled courses from localStorage for students
           const rawCourses = localStorage.getItem("enrolledCourses");
           console.log("🔍 Raw localStorage value:", rawCourses);
 
@@ -40,7 +53,7 @@ export default function Resources() {
     };
 
     fetchCourses();
-  }, [userRole]);
+  }, [userRole, userEmail, authToken]);
 
   // Handle navigation for "Add" or "Enroll"
   const handleNavigation = () => {

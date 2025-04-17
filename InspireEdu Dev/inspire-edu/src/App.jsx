@@ -22,6 +22,8 @@ import Courses from "./Components/Courses";
 import AddCourses from "./Components/AddCourse";
 import Performance from "./Components/Performance";
 import Popup from "./Components/PopUp";
+import AdminDashboard from "./Components/AdminDashboard";
+
 
 import "./App.css";
 
@@ -41,7 +43,7 @@ function Layout() {
       {/* Show Sidebar only on specific routes */}
       {showSidebar && (
         <div className="sidebar">
-          {userRole === "educator" ? <TeacherSidebar /> : <SideBar />}
+          {userRole === "student" ? <SideBar /> : <TeacherSidebar />}
         </div>
       )}
       <div className="content">
@@ -87,6 +89,11 @@ function Layout() {
           <Route element={<ProtectedRoute allowedRoles={["educator"]} />}>
             <Route path="/educator-dashboard" element={<EducatorDashboard />} />
           </Route>
+          {/* Protected Routes for Administrators */}
+          <Route element={<ProtectedRoute allowedRoles={["administrator"]} />}>
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          </Route>
+
 
           {/* 404 Page */}
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />
