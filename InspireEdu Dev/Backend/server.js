@@ -153,8 +153,55 @@ const Resource = mongoose.model("Resource", ResourceSchema);
 // const fs = require("fs");
 // const { exec } = require("child_process");
 // const path = require("path");
+// 🔹 Configure Multer for File Uploads
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  },
+});
+const videoSchema = new mongoose.Schema({
+  course: { type: String, required: true }, 
+  lectureNumber: { type: String, required: true },
+  videopath: { type: String, required: true },
+  uploadedAt: { type: Date, default: Date.now }
+});
 
+// Force the collection to be called "classes"
+const ClassVideo = mongoose.model("ClassVideo", videoSchema, "classes");
 
+const upload = multer({ storage });
+app.post("/upload-video", upload.single("file"), async (req, res) => {
+  const { subject, lectureNumber} = req.body;
+  const filePath =  `/uploads/${req.file.filename}`;
+
+  if (!subject || !filePath) {
+    return res.status(400).json({ error: "Course and file are required." });
+  }
+
+  try {
+    const newVideo = new ClassVideo({
+      course: subject,
+      videopath: filePath,
+      lectureNumber
+    });
+
+    await newVideo.save();
+    res.json({ message: "Video uploaded and saved to DB!" });
+  } catch (error) {
+    console.error("Upload video error:", error);
+    res.status(500).json({ error: "Failed to upload video." });
+  }
+});
+
+app.get("/classes/:course", async (req, res) => {
+  try {
+    const videos = await ClassVideo.find({ course: req.params.course });
+    res.json(videos);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch videos." });
+  }
+});
 
 
 const courseSchema = new mongoose.Schema({
@@ -356,13 +403,13 @@ app.get("/plan", async (req, res) => {
 
 
 // 🔹 Configure Multer for File Uploads
-const storage = multer.diskStorage({
+/*const storage = multer.diskStorage({
     destination: "uploads/",
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
     },
-});
-const upload = multer({ storage });
+});*/
+//const upload = multer({ storage });
 
 // 🔹 Get Courses Assigned to Educator by Email
 // Get educator's courses by email

@@ -12,6 +12,7 @@ const TeacherDashboard = () => {
   const [uploadMessage, setUploadMessage] = useState("");
   const [educatorCourses, setEducatorCourses] = useState([]);
   const [resources, setResources] = useState([]);
+  const [uploadType, setUploadType] = useState(""); // "pdf" or "video"
 
   const userEmail = localStorage.getItem("email");
   const authToken = localStorage.getItem("authToken");
@@ -22,11 +23,9 @@ const TeacherDashboard = () => {
     navigate("/login");
   };
 
-  // Fetch educator's courses and their resources
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get educator's assigned courses
         const coursesResponse = await axios.get(
           `http://localhost:5000/educator-courses/${userEmail}`,
           {
@@ -35,7 +34,6 @@ const TeacherDashboard = () => {
         );
         setEducatorCourses(coursesResponse.data.courses);
 
-        // Get resources for these courses
         const resourcesResponse = await axios.get(
           "http://localhost:5000/resources",
           {
@@ -54,52 +52,55 @@ const TeacherDashboard = () => {
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
-    if (!subject || !lectureNumber || !file) {
+    if (!subject || !file) {
       setUploadMessage("Please fill all fields and select a file.");
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append("subject", subject);
-    formData.append("lectureNumber", lectureNumber);
+    formData.append("subject", subject); 
     formData.append("file", file);
-
+    formData.append("lectureNumber", lectureNumber); 
+  
     try {
-      const response = await axios.post(
-        "http://localhost:5000/upload-resource",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authToken}`
-          }
+      const url = uploadType === "video"
+        ? "http://localhost:5000/upload-video"
+        : "http://localhost:5000/upload-resource";
+  
+      const response = await axios.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${authToken}`
         }
-      );
-      
+      });
+  
       setUploadMessage(response.data.message);
       setShowPopup(false);
       setSubject("");
       setLectureNumber("");
       setFile(null);
-      
-      // Refresh resources after upload
-      const res = await axios.get("http://localhost:5000/resources", {
-        params: { educatorEmail: userEmail },
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      setResources(res.data);
+  
+      if (uploadType === "pdf") {
+        const res = await axios.get("http://localhost:5000/resources", {
+          params: { educatorEmail: userEmail },
+          headers: { Authorization: `Bearer ${authToken}` }
+        });
+        setResources(res.data);
+      }
+  
     } catch (error) {
       setUploadMessage(error.response?.data?.error || "Error uploading file");
     }
   };
+  
+  
 
   const handleDeleteResource = async (resourceId) => {
     try {
       await axios.delete(`http://localhost:5000/resources/${resourceId}`, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
-      
-      // Refresh resources after deletion
+
       const res = await axios.get("http://localhost:5000/resources", {
         params: { educatorEmail: userEmail },
         headers: { Authorization: `Bearer ${authToken}` }
@@ -130,14 +131,26 @@ const TeacherDashboard = () => {
         <div className="content-container">
           <div className="content-card">
             <img className="photo" src="/icons/mentor_5766177.png" alt="" />
-            <button className="upload">
+            <button
+              className="upload"
+              onClick={() => {
+                setUploadType("video");
+                setShowPopup(true);
+              }}
+            >
               <p>Video</p>
               <img className="icon" src="/icons/plus_8001591.png" alt="" />
             </button>
           </div>
           <div className="content-card">
             <img className="photo" src="/icons/productivity_3315242.png" alt="" />
-            <button className="upload" onClick={() => setShowPopup(true)}>
+            <button
+              className="upload"
+              onClick={() => {
+                setUploadType("pdf");
+                setShowPopup(true);
+              }}
+            >
               <p>Resource</p>
               <img className="icon" src="/icons/plus_8001591.png" alt="" />
             </button>
@@ -145,7 +158,6 @@ const TeacherDashboard = () => {
         </div>
       </div>
 
-      {/* Resource List */}
       <div className="resources-section">
         <h2>Your Lecture Resources</h2>
         <div className="resources-list">
@@ -154,7 +166,7 @@ const TeacherDashboard = () => {
               <span>{resource.subject} - {resource.lectureNumber}</span>
               <div>
                 <a href={resource.filePath} target="_blank" rel="noreferrer">View</a>
-                <button 
+                <button
                   onClick={() => handleDeleteResource(resource._id)}
                   className="delete-btn"
                 >
@@ -166,16 +178,15 @@ const TeacherDashboard = () => {
         </div>
       </div>
 
-      {/* Upload Popup */}
       {showPopup && (
         <div className="popup-container">
           <div className="popup-content">
-            <h3>Upload Resource</h3>
+            <h3>Upload {uploadType === "video" ? "Video" : "Resource"}</h3>
             <form onSubmit={handleFileUpload}>
               <label>Course:</label>
-              <select 
-                value={subject} 
-                onChange={(e) => setSubject(e.target.value)} 
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
                 required
               >
                 <option value="">Select a course</option>
@@ -185,26 +196,40 @@ const TeacherDashboard = () => {
               </select>
 
               <label>Lecture Number:</label>
-              <input 
-                type="text" 
-                value={lectureNumber} 
-                onChange={(e) => setLectureNumber(e.target.value)} 
-                required 
+              <input
+                type="text"
+                value={lectureNumber}
+                onChange={(e) => setLectureNumber(e.target.value)}
+                required
               />
 
-              <label>Upload PDF:</label>
-              <input 
-                type="file" 
-                accept="application/pdf" 
-                onChange={(e) => setFile(e.target.files[0])} 
-                required 
-              />
+              {uploadType === "video" ? (
+                <>
+                  <label>Upload Video:</label>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    required
+                  />
+                </>
+              ) : (
+                <>
+                  <label>Upload PDF:</label>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    required
+                  />
+                </>
+              )}
 
               <div className="popup-buttons">
                 <button type="submit" className="upload-btn">Upload</button>
-                <button 
-                  type="button" 
-                  className="cancel-btn" 
+                <button
+                  type="button"
+                  className="cancel-btn"
                   onClick={() => setShowPopup(false)}
                 >
                   Cancel

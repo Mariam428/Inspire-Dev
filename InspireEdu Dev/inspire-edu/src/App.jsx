@@ -64,7 +64,7 @@ function Layout() {
           <Route path="/Register-Course" element={<Courses />} />
           <Route path="/Add-Course" element={<AddCourses />} />
           <Route path="/Performance" element={<Performance/>} />
-
+          
 
 
           {/* Protected Routes for Students */}
