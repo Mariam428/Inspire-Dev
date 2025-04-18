@@ -34,7 +34,7 @@ const TeacherSideBar = () => {
 
       {/* Sidebar Items with Navigation */}
       <div className="menu">
-        {fullSidebar.map((item, index) => (
+        {sidebarItems.map((item, index) => (
           <NavLink
             key={index}
             to={item.path}
