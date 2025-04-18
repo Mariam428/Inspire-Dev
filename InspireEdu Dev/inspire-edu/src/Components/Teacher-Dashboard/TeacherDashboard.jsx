@@ -15,7 +15,7 @@ const TeacherDashboard = () => {
 
   const userEmail = localStorage.getItem("email");
   const authToken = localStorage.getItem("authToken");
-
+  
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("role");
