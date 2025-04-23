@@ -158,25 +158,6 @@ const TeacherDashboard = () => {
         </div>
       </div>
 
-      <div className="resources-section">
-        <h2>Your Lecture Resources</h2>
-        <div className="resources-list">
-          {resources.map(resource => (
-            <div key={resource._id} className="resource-item">
-              <span>{resource.subject} - {resource.lectureNumber}</span>
-              <div>
-                <a href={resource.filePath} target="_blank" rel="noreferrer">View</a>
-                <button
-                  onClick={() => handleDeleteResource(resource._id)}
-                  className="delete-btn"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {showPopup && (
         <div className="popup-container">

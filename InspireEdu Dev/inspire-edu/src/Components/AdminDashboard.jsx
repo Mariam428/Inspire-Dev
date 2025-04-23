@@ -106,8 +106,4 @@ const AdminDashboard = () => {
   );
 };
 
-<<<<<<< HEAD
 export default AdminDashboard;
-=======
-export default AdminDashboard;
->>>>>>> 844a46b (ready for mohamed essam)
