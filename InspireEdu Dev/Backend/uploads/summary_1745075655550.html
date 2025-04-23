@@ -1,0 +1,27 @@
+\boxed{<h2>Discrete-Time Fourier Series</h2>
+<p>The <b>Discrete-Time Fourier Series</b> is a linear combination of complex exponentials where fundamental frequencies are integer multiples of the fundamental frequency of the periodic sequence. The motivation for representing discrete-time signals through the Fourier series is identical in both continuous and discrete time. Complex exponentials are <b>eigenfunctions of linear time-invariant systems</b>; therefore, the effect of an LTI system on each of these basic signals is simply a (complex) amplitude change. However, in the <b>discrete-time case</b>, the representation involves only a finite number of complex exponentials whose frequencies are integer multiples of the fundamental frequency.</p>
+
+<h2>Discrete-Time Fourier Transform</h2>
+<p>The <b>discrete-time Fourier transform</b> is a summation very similar in form to the synthesis equation and suggests a strong duality between the analysis and synthesis equations. Because the basic complex exponentials repeat periodically in frequency, two alternative interpretations arise for the behavior of the Fourier series coefficients. One interpretation is that there are only $N$ unique Fourier series coefficients, whereas the second is that the sequence representing its Fourier series coefficients can run on indefinitely but repeats periodically. To retain a duality between the discrete and continuous Fourier transforms, different interpretations may be used.</p>
+
+<h2>Fourier Series Coefficients for a Discrete-Time Periodic Signal</h2>
+<p>To obtain the <b>discrete-time Fourier series coefficients</b> for a discrete-time periodic square wave, the analysis equation is used because the synthesis equation here is an integral and the analysis equation is a summation. This represents one difference between the discrete and continuous Fourier transforms. Another important difference is that the Fourier series for discrete-time signals is always a periodic function of frequency. Consequently, it is completely defined by its behavior over a frequency range of $2\pi$, in contrast to the continuous Fourier transform which extends over an infinite frequency range.</p>
+
+<h3>Envelope Illustration and Period Increase</h3>
+<p>An <b>envelope</b> illustrates that the discrete-time Fourier series coefficients can be seen as samples of an envelope given by $\frac{\sin[(2N_1 + 1)\omega/2]}{\sin(\omega/2)}$ . As the period increases, the envelope remains the same while the samples become more closely spaced. For a periodic signal $x[n]$ with fundamental frequency $\frac{2\pi}{N}$, the Fourier series coefficients $a_k$ are defined as $a_k = \frac{1}{N} \sum_{n=<N>} x[n]e^{-jk(2\pi/N)n}$ where $N$ is the period of the signal.</p>
+
+<h2>Fourier Representation of Discrete-Time Aperiodic Signals</h2>
+<p>The Fourier series coefficients for discrete-time aperiodic signals are utilized to represent these signals as the limiting form of a periodic signal as the period increases. When the period approaches infinity, we get the Fourier transform of a rectangular pulse (which can be seen as one period of a periodic signal whose period is increasing). The Fourier transform of a rectangular pulse is described as the limit of the Fourier series for a periodic signal whose period tends to infinity.</p>
+
+<h2>Discrete-Time Fourier Transform Equations</h2>
+<p>The synthesis equation for the discrete-time Fourier transform (IDTFT) is:
+$$x[n] = \frac{1}{2\pi} \int_{2\pi} X(e^{j\omega}) e^{j\omega n} d\omega.$$
+The analysis equation for the discrete-time Fourier transform (DTFT) is:
+$$X(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x[n] e^{-j\omega n}.$$
+The Fourier series coefficients $a_k$ for a periodic signal $x[n]$ can be described in terms of the Fourier transform $X(e^{j\omega})$ of one period $x_1[n]$ (where $x_1[n]$ represents one period) as:
+$$a_k = \frac{1}{N} X_1(e^{jk\omega_0}),$$
+where $X_1(e^{j\omega})$ is the Fourier transform of the one period signal $x_1[n]$, and $\omega_0 = \frac{2\pi}{N}$ is the fundamental frequency.</p>
+
+<h2>Conclusion</h2>
+<p>To summarize, the <b>Discrete-Time Fourier Series</b> provides a powerful tool for analyzing periodic sequences through a linear combination of complex exponentials. The <b>discrete-time Fourier transform</b> functions analogously for aperiodic signals where $X(e^{j\omega})$ is periodic with period $2\pi$. The connection between the Fourier series coefficients and the Fourier transform of one period of a periodic signal enriches our understanding of Fourier representations in discrete-time systems.</p>
+}

@@ -1,0 +1,22 @@
+\boxed{<h2>Introduction to NP-Hardness and Reductions</h2>
+<p>In order to compare the hardness of solving different problems, we use <b>reductions</b>. The idea is that if I can show that I can solve a problem <b>A</b> by using a black box that solves problem <b>B</b>, then I can understand the difficulty of solving problem <b>A</b> in terms of the work required to transform a solution of <b>B</b> to the solution of problem <b>A</b>. In this case, we consider a polynomial time algorithm to be <b>efficient</b>. We consider the set of all decision problems for which there exists a polynomial-time verification algorithm.</p>
+
+<p>A decision problem is <b>NP-Hard</b> if all problems in <b>NP</b> are polynomial time reducible to it. That is, given an efficient algorithm which solves an NP-hard problem, we can easily construct an algorithm for a decision problem. In other words, if solving <b>B</b> is easy then solving <b>A</b> is easy. Equivalently, if <b>A</b> is hard, then <b>B</b> is hard.</p>
+
+<h2>Hamiltonian Cycle and Hamiltonian Path</h2>
+<p>Given a directed graph, is there a cycle that visits every vertex exactly once? Given that <b>Hamiltonian Cycle</b> is NP-Complete, we prove that <b>Hamiltonian Path</b> is NP. To prove this, we need to prove that there exists a verifier <b>V(x, y)</b>.</p>
+
+<p>Suppose that we are given a path that traverses every vertex of the graph. We can use this to check that the path traverses all the vertices in the graph exactly once and then check that every edge in the path is an edge in a graph. In this case, we can use the path to ensure that all the edges in that path are an edge of the graph.</p>
+
+<p>Hamiltonian Cycle is a combinatorial problem that is hard to solve. We prove this by giving a Karp-reduction of Hamiltonian Cycle to Hamiltonian Path. We use this to show that Hamiltonian path is NP-Hard. We define a graph that consists of two vertices and each vertex is traversed exactly once.</p>
+
+<p>Suppose that there is a Hamiltonian cycle in a given Hamiltonian path. We can use the edges of the cycle as the path on the path but the path must begin on <b>v</b> and end on <b>v</b>. The transformation takes at most <b>O(E)</b>. If there are two Hamiltonian cycles in the same cycle, there is one Hamiltonian Cycle on the other Hamiltonian Path. The two cycles must begin at the beginning and end at the end of the path. The path must start at the start and end point.</p>
+
+<h2>3Dimensional Matching and 4-Partition</h2>
+<p>Suppose that there are three disjoint sets <b>X</b>, <b>Y</b>, <b>Z</b>, which each contain <b>n</b> elements and triples. Given that <b>3Dimensional Matching</b> is NP-complete, we prove that there is a partition into four subsets of four elements each with the same sum. We can verify a potential solution by checking that the elements in each partition sum to <b>t</b>, and that no element is used more than once.</p>
+
+<p>Suppose that given an input <b>X</b>, <b>Y</b>, <b>Z</b> and triples <b>T</b> to 3DM, we create a set of <b>n</b> integers as part of our set of integers. This takes at most <b>O(n^2)</b> naively. We prove this by giving a Karp-reduction of 3DM to 4-partition.</p>
+
+<p>Suppose that we want to set a target sum of <b>40r+415</b> for each triple in the triple equation. We set our target sum by adding a triple element with three actual elements or three dummy elements. The target sum can be achieved by adding three actual triple elements or by using a dummy element. We can then set the target sum to <b>40R+415</b>.</p>
+
+<p>Suppose that we are given a set of four elements that contains a triple element and three dummy elements. We are

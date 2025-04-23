@@ -20,6 +20,11 @@ const Login = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
 
+      console.log("Login response data:", data);
+      localStorage.setItem("token", data.token);  // Make sure this is happening
+      localStorage.setItem("authToken", data.token);  // Add this as a backup
+      console.log("Token saved:", localStorage.getItem("authToken"));
+
       // Store user details in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
@@ -87,12 +92,14 @@ if (currentGradesRes.ok) {
 
       
       // Navigate based on role
-      if (data.role === "student") {
-        navigate("/student-dashboard");
-      } else {
-        navigate("/educator-dashboard");
-      }
-
+    if (data.role === "student") {
+      navigate("/student-dashboard");
+    } else if (data.role === "administrator") {
+      setTimeout(() => {
+        navigate("/admin-dashboard");
+      }, 100);    } else {
+      navigate("/educator-dashboard"); // For educators
+    }
     } catch (error) {
       alert(error.message);
     }
