@@ -1,0 +1,34 @@
+\boxed{`<h3>Discrete-Time Fourier Series (DTFS)</h3>
+<p><b>Discrete-Time Fourier Series</b> is a linear combination of complex exponentials with fundamental frequencies that are integer multiples of the fundamental frequency of the periodic sequence. The motivation for representing discrete-time signals through the Fourier series is identical in both continuous and discrete time. Complex exponentials are eigenfunctions of linear time-invariant (LTI) systems and therefore the effect of an LTI system on each of these basic signals is simply a (complex) amplitude change. However, in the discrete time case, the representation involves only N terms where N is the period of the signal.</p>
+
+<h3>Representation Differences between Continuous and Discrete Time</h3>
+<p>The discrete-time Fourier transform is a summation very similar in form to the synthesis equation and suggests a strong duality between the analysis and synthesis equations. <b>Because the basic complex exponentials repeat periodically in frequency</b>, two alternative interpretations arise for the behavior of the Fourier series coefficients. One interpretation is that there are only N coefficients and the second is that the sequence representing its Fourier Series coefficients can run on indefinitely but repeats periodically. In order to retain a duality.</p>
+
+<h3>Obtaining Discrete-Time Fourier Series Coefficients</h3>
+<p>The discrete-time Fourier series coefficients for a discrete time periodic square are obtained by using the analysis equation. This is because the synthesis equation is now an integral and the analysis equation is a summation. This represents one difference between the discrete and the continuous Fourier transforms. Another important difference is that the Fourier series is always a periodic function of frequency. Consequently, it is completely defined by its behavior over a frequency range of $2\pi$, in contrast to the continuous Fourier transform which extends over an infinite frequency range.</p>
+
+<h3>Illustration of Fourier Series Coefficients as Samples of an Envelope</h3>
+<p>This part of the text describes an illustration where the discrete-time Fourier series coefficients are seen as samples of an envelope that remains the same as the period increases except that the samples representing the Fourier series coefficients become more closely spaced. An example is given where $N = 5, 10,$ and $20$.</p>
+<h4>Envelope:</h4>
+$$
+\frac{\sin[(2N_1 + 1)\omega/2]}{\sin(\omega/2)}
+$$
+<p>The Fourier series coefficients for discrete-time aperiodic signals are used to represent them as the limiting form of a periodic signal when the period increases. These coefficients function while the period increases and are compared to the Fourier series coefficients of the discrete-time aperiodic signal.</p>
+
+<h3>Fourier Representation of Discrete-Time Aperiodic Signals</h3>
+<p>A summary of the approach used to obtain a Fourier representation of discrete time aperiodic signals is provided here. The <b>discrete-time Fourier Transform</b> for a rectangular pulse is described in terms of the discrete time Fourier series as the period approaches infinity. The upper limit in the summation in the second equation should be $n = (N/2) - 1$.</p>
+
+<h3>Discrete-Time Fourier Transform (DTFT)</h3>
+<p>The analytical and synthesis equations for the Fourier transform are presented in detail. The first equation is a Fourier transformation for an exponential sequence. The second equation is an analysis of the "three-dimensional Fourier series" (which seems a bit out of context here, so it might be a typo or a misphrasing).</p>
+
+<h3>Relation between Fourier Series and Fourier Transform for Periodic Signals</h3>
+<p>The Fourier series coefficients of a periodic signal are described in terms of the Fourier transform of one period of the signal. The Fourier transform is defined such that the Fourier series coefficients are given by $1/N$ times samples of the Fourier transform of one period. This means that the Fourier transformation can be used to determine the number of periods of the signal.</p>
+
+<h3>Conclusion</h3>
+<p>MIT OpenCourseWare is a free online learning resource for Signals and Systems. It provides an overview of the Fourier series coefficients of Fourier transforms for a given periodic signal $x[n]$. The Fourier series coefficients of a periodic signal can be derived from $1/N$ times samples of the Fourier transform of one period of the signal $x[n]$. This means that:
+$$
+\text{(Fourier series coefficients of } \widetilde{x}[n]) = \frac{1}{N} \times (\text{samples of Fourier transform of } x[n] \text{ which represents one period of } \tilde{x}[n]).
+$$
+</p>
+
+<p><b>Key points are bolded and all information is chunked into relevant topics with appropriate headings.</b></p>`}

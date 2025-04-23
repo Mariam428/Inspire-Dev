@@ -807,19 +807,20 @@ app.post("/submit-quiz", async (req, res) => {
       if (correct && userAnswer === correct.correctAnswer) score++;
     });
 
-    // ✅ Save/update in QuizScore collection this part works well
-    let existingScore = await QuizScore.findOne({ userId, weekNumber });
+// ✅ Save/update in QuizScore collection (fixed)
+let existingScore = await QuizScore.findOne({ userId, weekNumber });
 
-    if (existingScore) {
-      existingScore.scores[formattedSubject] = score;
-      await existingScore.save();
-    } else {
-      await new QuizScore({
-        userId,
-        weekNumber,
-        scores: { [formattedSubject]: score },
-      }).save();
-    }
+if (existingScore) {
+  existingScore.set(`scores.${formattedSubject}`, score);
+  await existingScore.save();
+} else {
+  await new QuizScore({
+    userId,
+    weekNumber,
+    scores: { [formattedSubject]: score },
+  }).save();
+}
+
     // ✅ save submission record
     
    

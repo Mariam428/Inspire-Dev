@@ -1,112 +1,107 @@
 import sys
 import io
-import fitz
+import fitz  
 import re
 import numpy as np
-import pysbd
 import math
 import json
 import requests
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-from scipy.signal import argrelextrema
+import nltk
+import pysbd
 from fpdf import FPDF
+from PIL import Image
+import pytesseract
 import torch
+from transformers import pipeline, AutoTokenizer
+from sentence_transformers import SentenceTransformer
 
-# Force UTF-8 encoding for stdout
+# UTF-8 stdout
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+nltk.download("punkt")
 
-print("[OK] Script started")
-print(torch.cuda.is_available())  # Should print True if CUDA is available
-print(torch.cuda.device_count())  # Should print the number of GPUs available
+# Hugging Face login
+from huggingface_hub import login
+HUGGINGFACE_TOKEN = "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"
+login(HUGGINGFACE_TOKEN)
 
-# Arguments
+# Model and tokenizer
+flan_model = "mariam16elgohary/flan_on_arxiv_mit_lectures6_prompt3"
+flan_tokenizer = AutoTokenizer.from_pretrained(flan_model)
+flan_prompt = "Summarize the following technical lecture text. Ensure the output is structured, preserve keypoints and avoid repetition or factual errors."
+
+# CLI args
 if len(sys.argv) < 3:
-    print("[ERROR] Incorrect arguments. Usage: python summarize.py <pdf_path> <summary_path>")
+    print("[ERROR] Usage: python summarize.py <pdf_path> <summary_path>")
     sys.exit(1)
 
 pdf_path = sys.argv[1]
 summary_path = sys.argv[2]
 print(f"PDF Path: {pdf_path}")
+print(f"Saving to: {summary_path}")
 
-# Load custom summarization model
-model_name = "mariam16elgohary/distil_bart_on_arxiv_mit_lectures"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+def extract_text_from_pdf(pdf_path):
+    pdf_document = fitz.open(pdf_path)
+    full_text = ""
 
-# Text extraction and preprocessing
-def extract_text_from_pdf(file_path):
-    text = ""
-    with fitz.open(file_path) as pdf:
-        for page in pdf:
-            text += page.get_text()
-    return text
+    for page in pdf_document:
+        text = page.get_text().strip()
+        full_text += text + "\n"
 
-def clean_text(text):
-    patterns = [r'^\d+\.\d{4}\s+LECTURE\s+\d+$', r'^\d+$']
-    for pattern in patterns:
-        text = re.sub(pattern, '', text, flags=re.MULTILINE)
-    return text
+        if not text:
+            for img in page.get_images(full=True):
+                xref = img[0]
+                base_image = pdf_document.extract_image(xref)
+                img_bytes = base_image["image"]
+                img_pil = Image.open(io.BytesIO(img_bytes))
+                text_from_img = pytesseract.image_to_string(img_pil, lang='eng')
+                full_text += text_from_img + "\n"
 
-def preprocess_text(text):
-    text = re.sub(r'[^a-zA-Z0-9\s.,•\t-]', '', text)
+    pdf_document.close()
+    return full_text
+
+def preprocess_lecture_text(text):
+    text = re.sub(r'\b(?:Page|p|P)\s?\d+[a-zA-Z]*\b', '', text)
+    text = re.sub(r'\b\d+\b', '', text)
+    text = re.sub(r'\bDr\.?\s+[A-Z][a-z]+\s+[A-Z][a-z]+\b', '', text)
+    text = re.sub(r'\bDr\.?\s+[A-Z][a-z]+\b', '', text)
+    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', '', text)
+    text = re.sub(r'Course Outline\b[\s\S]*?(?=\n\w)', '', text)
+    text = re.sub(r'Grades\b[\s\S]*?(?=\n\w)', '', text)
+    text = re.sub(r'[•–*]', '', text)
+    text = re.sub(r'[^\x00-\x7F]+', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r',\s*(?=\w)', '', text)
     return text
 
-def activate_similarities(similarities, p_size=10):
-    x = np.linspace(-10, 10, p_size)
-    y = np.vectorize(lambda x: 1 / (1 + math.exp(0.5 * x)))
-    activation_weights = np.pad(y(x), (0, similarities.shape[0] - p_size))
-    diagonals = [np.pad(similarities.diagonal(each), (0, similarities.shape[0] - len(similarities.diagonal(each))))
-                 for each in range(0, similarities.shape[0])]
-    activated_similarities = np.sum(np.stack(diagonals) * activation_weights.reshape(-1, 1), axis=0)
-    return activated_similarities
+from nltk.tokenize import sent_tokenize
+def semantic_chunk(text, tokenizer, max_tokens=512, reserve_tokens=5):
+    adjusted_max = max_tokens - reserve_tokens
+    sents = sent_tokenize(text)
+    chunks, current = [], ""
 
-def chunk_text(text, max_length=500):
-    words = text.split()
-    return [" ".join(words[i:i + max_length]) for i in range(0, len(words), max_length)]
-
-# Summarization
-def summarize_pdf(file_path):
-    raw_text = extract_text_from_pdf(file_path)
-    raw_text = clean_text(raw_text)
-    cleaned_text = preprocess_text(raw_text)
-
-    segmenter = pysbd.Segmenter(language="en", clean=False)
-    sentences = segmenter.segment(cleaned_text)
-    sentences = [s for s in sentences if len(s.split()) > 3]
-
-    sentence_model = SentenceTransformer('all-mpnet-base-v2')
-    embeddings = sentence_model.encode(sentences)
-    embeddings /= np.linalg.norm(embeddings, axis=1, keepdims=True)
-    similarities = cosine_similarity(embeddings)
-    activated_similarities = activate_similarities(similarities, p_size=10)
-    minimas = argrelextrema(activated_similarities, np.less, order=2)
-
-    split_points = list(minimas[0])
-    topic_chunks = []
-    chunk = []
-    for i, sentence in enumerate(sentences):
-        if i in split_points:
-            topic_chunks.append(" ".join(chunk))
-            chunk = [sentence]
+    for sent in sents:
+        if len(tokenizer.encode(current + " " + sent, add_special_tokens=False)) <= adjusted_max:
+            current += " " + sent
         else:
-            chunk.append(sentence)
-    if chunk:
-        topic_chunks.append(" ".join(chunk))
+            if current:
+                chunks.append(current.strip())
+            current = sent
 
-    summarizer = pipeline("summarization", model=model, tokenizer=tokenizer, device=-1)
+    if current:
+        chunks.append(current.strip())
+    return chunks
+
+def run_summarizer(model_name, input_chunks, prompt=None, **kwargs):
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    summarizer = pipeline("summarization", model=model_name, tokenizer=tokenizer, truncation=True)
+
     summaries = []
-    for chunk in topic_chunks:
-        for sub_chunk in chunk_text(chunk):
-            summary = summarizer(sub_chunk, max_length=150, min_length=50, do_sample=False,
-                                 no_repeat_ngram_size=3, early_stopping=True)[0]['summary_text']
-            summaries.append(summary)
+    for chunk in input_chunks:
+        input_text = prompt + " " + chunk if prompt else chunk
+        result = summarizer(input_text, do_sample=False, **kwargs)
+        summaries.append(result[0]['summary_text'])
+    return " ".join(summaries)
 
-    return "\n\n".join(summaries)
-
-# Post-processing via OpenRouter API
 def highlight_text(text):
     API_KEY = "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"
     MODEL = "deepseek/deepseek-r1-zero:free"
@@ -120,7 +115,7 @@ def highlight_text(text):
     prompt = f"""
     Process the following text and return it as HTML code:
     1. Bold the key points using HTML <b> tags.
-    2. Chunk into topics, each topic is wrapped in <p> tags and with a title in <h>.
+    2. Chunk into topics, each topic is wrapped in <p> tags and with a title in <h> tags.
     3. Ensure the output is clean and ready to be displayed on a webpage.
 
     Here’s the text:
@@ -128,38 +123,47 @@ def highlight_text(text):
     {text}
     """
 
-    payload = {
+    response = requests.post(url, headers=headers, data=json.dumps({
         "model": MODEL,
         "messages": [{"role": "user", "content": prompt}]
-    }
-
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    }))
     response.raise_for_status()
-    result = response.json()
-    raw_html = result["choices"][0]["message"]["content"]
+    raw_html = response.json()["choices"][0]["message"]["content"]
 
-    # Clean response
     raw_html = re.sub(r"```html\s*", "", raw_html)
     raw_html = re.sub(r"```", "", raw_html)
     return raw_html
 
-# PDF generation fallback
 def save_to_pdf(text, output_path):
     pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True)
+    pdf.set_font("DejaVu", size=12)
+    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.multi_cell(0, 10, text)
     pdf.output(output_path)
 
-# Main runner
-if __name__ == "__main__":
-    summary_text = summarize_pdf(pdf_path)
-    html_result = highlight_text(summary_text)
+def summarize_pdf(file_path, summary_path):
+    raw_text = extract_text_from_pdf(file_path)
+    preprocessed = preprocess_lecture_text(raw_text)
+    chunks = semantic_chunk(preprocessed, flan_tokenizer)
 
-    # Save both versions
+    summary = run_summarizer(
+        flan_model, chunks, prompt=flan_prompt,
+        max_length=500, min_length=100,
+        no_repeat_ngram_size=3,
+        repetition_penalty=1.3,
+        early_stopping=True,
+        length_penalty=1.0
+    )
+
+    html_result = highlight_text(summary)
+
     with open(summary_path.replace(".pdf", ".html"), "w", encoding="utf-8") as f:
         f.write(html_result)
 
-    save_to_pdf(summary_text, summary_path)
-    print(f"[DONE] Summary saved to: {summary_path}")
+    save_to_pdf(summary, summary_path)
+    print(f"[DONE] PDF + HTML summary saved.")
+
+if __name__ == "__main__":
+    summarize_pdf(pdf_path, summary_path)
