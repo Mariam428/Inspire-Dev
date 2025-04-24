@@ -223,6 +223,7 @@ const studySessionSchema = new mongoose.Schema({
   subject: { type: String, required: true },
   hours: { type: Number, required: true },
   details: { type: [String], default: [] },
+  completed: { type: Boolean, default: false }
 });
 
 // ✅ Define WeeklyPlan schema next
@@ -375,26 +376,103 @@ app.post("/generic", async (req, res) => {
 
 // Export app or start server if needed
 //module.exports = app;
+// Add this new function to your server.js
+async function getIncompleteTasks(userId, currentWeek) {
+  const previousPlans = await WeeklyStudyPlan.find({
+    userId,
+    weekNumber: { $lt: currentWeek }
+  });
+
+  const incompleteTasks = {};
+  
+  previousPlans.forEach(plan => {
+    // Convert Mongoose Map to regular object if needed
+    const studyPlan = plan.studyPlan instanceof Map ? 
+      Object.fromEntries(plan.studyPlan.entries()) : 
+      plan.studyPlan;
+    
+    Object.entries(studyPlan).forEach(([day, tasks]) => {
+      if (!Array.isArray(tasks)) return;
+      
+      if (!incompleteTasks[day]) incompleteTasks[day] = [];
+      
+      tasks.forEach(task => {
+        if (!task.completed) {
+          incompleteTasks[day].push({
+            subject: task.subject,
+            hours: task.hours,
+            details: Array.isArray(task.details) ? [...task.details] : [],
+            completed: false,
+            carriedOver: true,
+            originalWeek: plan.weekNumber,
+          });
+          
+        }
+      });
+    });
+  });
+
+  return incompleteTasks;
+}
+
+// Updated /plan endpoint
 app.get("/plan", async (req, res) => {
   const { userId, weekNumber } = req.query;
+  const currentWeekNum = parseInt(weekNumber);
 
   try {
-    const plan = await WeeklyStudyPlan.findOne({ userId, weekNumber });
+    // 1. Get current week's plan
+    const currentPlan = await WeeklyStudyPlan.findOne({ 
+      userId, 
+      weekNumber: currentWeekNum 
+    });
+    
+    // 2. Get incomplete tasks from previous weeks
+    const incompleteTasks = await getIncompleteTasks(userId, currentWeekNum);
+    
+    // 3. Create merged plan
+    const mergedPlan = 
+  currentPlan && currentPlan.studyPlan 
+    ? (currentPlan.studyPlan instanceof Map 
+        ? Object.fromEntries(currentPlan.studyPlan.entries()) 
+        : { ...currentPlan.studyPlan }) 
+    : {};
 
-    if (!plan) {
-      return res.status(200).json({ 
-        message: "No plan found for this week", 
-        studyPlan: {} 
+    
+    // 4. Merge tasks by day
+    Object.entries(incompleteTasks).forEach(([day, tasks]) => {
+      mergedPlan[day] = [
+        ...(mergedPlan[day] || []), // Current week's tasks
+        ...tasks.filter(t => 
+          // Ensure no duplicates (compare by subject+hours+details)
+          !(mergedPlan[day] || []).some(existingTask =>
+            existingTask.subject === t.subject &&
+            existingTask.hours === t.hours &&
+            JSON.stringify(existingTask.details) === JSON.stringify(t.details)
+        ))
+      ];
+    });
+
+    // 5. Sort tasks - newest first, carried-over after
+    Object.keys(mergedPlan).forEach(day => {
+      mergedPlan[day].sort((a, b) => {
+        if (a.carriedOver !== b.carriedOver) {
+          return a.carriedOver ? 1 : -1;
+        }
+        return 0;
       });
-    }
+    });
 
     res.status(200).json({
       message: "Study plan fetched successfully",
-      studyPlan: plan.studyPlan,
+      studyPlan: mergedPlan,
     });
   } catch (err) {
-    console.error("❌ Error fetching plan:", err);
-    res.status(500).json({ message: "Server error while fetching plan" });
+    console.error("Error fetching plan:", err);
+    res.status(500).json({ 
+      message: "Server error while fetching plan",
+      error: err.message 
+    });
   }
 });
 
@@ -940,7 +1018,38 @@ app.get("/get-all-scores", async (req, res) => {
   }
 });
 
+// Add this to your server.js (in the routes section)
+app.put('/update-task-status', async (req, res) => {
+  const { userId, weekNumber, day, taskIndex, completed } = req.body;
 
+  try {
+    const plan = await WeeklyStudyPlan.findOne({ userId, weekNumber });
+    if (!plan) {
+      return res.status(404).json({ error: "Plan not found" });
+    }
+
+    // Initialize the day's array if it doesn't exist
+    if (!plan.studyPlan.get(day)) {
+      plan.studyPlan.set(day, []);
+    }
+
+    // Ensure the task exists at the given index
+    if (taskIndex >= plan.studyPlan.get(day).length) {
+      return res.status(400).json({ error: "Invalid task index" });
+    }
+
+    // Update the task's completed status
+    const task = plan.studyPlan.get(day)[taskIndex];
+    task.completed = completed;
+    plan.markModified('studyPlan'); // Mark the studyPlan map as modified
+    await plan.save();
+
+    res.status(200).json({ message: "Task status updated successfully" });
+  } catch (error) {
+    console.error("Error updating task status:", error);
+    res.status(500).json({ error: "Failed to update task status" });
+  }
+});
 
 
 // 🔹 Start server
