@@ -8,18 +8,11 @@ const textColors = ["text-green-700", "text-orange-700", "text-red-700", "text-g
 const borderColors = ["border-green-300", "border-orange-300", "border-red-300", "border-gray-300", "border-yellow-300"];
 
 export default function Courses() {
-  const isAdmin = localStorage.getItem("userEmail") === "admin@gmail.com";
   const [courses, setCourses] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newCourseName, setNewCourseName] = useState("");
   const [uploadMessage, setUploadMessage] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate("/educator-dashboard");
-    }
-  }, []);
 
   useEffect(() => {
     fetchCourses();
@@ -41,7 +34,8 @@ export default function Courses() {
     try {
       const response = await axios.post("http://localhost:5000/courses", { name: newCourseName });
       const newCourse = response.data.course;
-
+      
+      // Assign color dynamically (Loop through colors)
       const index = courses.length % colors.length;
       newCourse.color = colors[index];
       newCourse.textColor = textColors[index];
@@ -70,25 +64,22 @@ export default function Courses() {
       <h1 className="courses-title">Courses</h1>
 
       <div className="courses-grid">
-        {courses.length > 0 && courses.map((course, index) => (
-          <div key={index} className={`courses-card ${course.color} ${course.borderColor}`}>
-            <h2 className={`courses-title ${course.textColor}`}>{course.name}</h2>
-            {isAdmin && (
-              <button className="delete-btn" onClick={() => handleDeleteCourse(course.name)}>❌</button>
-            )}
-          </div>
-        ))}
+      {courses.length > 0 && courses.map((course, index) => (
+        <div key={index} className={`courses-card ${course.color} ${course.borderColor}`}>
+          <h2 className={`courses-title ${course.textColor}`}>{course.name}</h2>
+          <button className="delete-btn" onClick={() => handleDeleteCourse(course.name)}>❌</button>
+        </div>
+      ))}
+
 
         {/* Add Course Button */}
-        {isAdmin && (
-          <div className="add-course" onClick={() => setShowPopup(true)}>
-            <img src="/icons/plus.png" alt="Add Course" />
-          </div>
-        )}
+        <div className="add-course" onClick={() => setShowPopup(true)}>
+          <img src="/icons/plus.png" alt="Add Course" />
+        </div>
       </div>
 
       {/* Add Course Popup */}
-      {isAdmin && showPopup && (
+      {showPopup && (
         <div className="popup-container">
           <div className="popup-content">
             <h3>Add Course</h3>
