@@ -421,57 +421,43 @@ app.get("/plan", async (req, res) => {
   const currentWeekNum = parseInt(weekNumber);
 
   try {
-    // 1. Get current week's plan
-    const currentPlan = await WeeklyStudyPlan.findOne({ 
-      userId, 
-      weekNumber: currentWeekNum 
-    });
-    
-    // 2. Get incomplete tasks from previous weeks
-    const incompleteTasks = await getIncompleteTasks(userId, currentWeekNum);
-    
-    // 3. Create merged plan
-    const mergedPlan = 
-  currentPlan && currentPlan.studyPlan 
-    ? (currentPlan.studyPlan instanceof Map 
-        ? Object.fromEntries(currentPlan.studyPlan.entries()) 
-        : { ...currentPlan.studyPlan }) 
-    : {};
-
-    
-    // 4. Merge tasks by day
-    Object.entries(incompleteTasks).forEach(([day, tasks]) => {
-      mergedPlan[day] = [
-        ...(mergedPlan[day] || []), // Current week's tasks
-        ...tasks.filter(t => 
-          // Ensure no duplicates (compare by subject+hours+details)
-          !(mergedPlan[day] || []).some(existingTask =>
-            existingTask.subject === t.subject &&
-            existingTask.hours === t.hours &&
-            JSON.stringify(existingTask.details) === JSON.stringify(t.details)
-        ))
-      ];
+    // 1. Fetch current week's plan
+    const currentPlan = await WeeklyStudyPlan.findOne({
+      userId,
+      weekNumber: currentWeekNum,
     });
 
-    // 5. Sort tasks - newest first, carried-over after
-    Object.keys(mergedPlan).forEach(day => {
-      mergedPlan[day].sort((a, b) => {
-        if (a.carriedOver !== b.carriedOver) {
-          return a.carriedOver ? 1 : -1;
-        }
-        return 0;
-      });
-    });
+    // 2. Fetch overdue tasks from previous weeks
+    const overdueByDay = await getIncompleteTasks(userId, currentWeekNum);
 
+    // 3. Convert studyPlan to object if it's a Map
+    const studyPlanRaw =
+      currentPlan && currentPlan.studyPlan
+        ? currentPlan.studyPlan instanceof Map
+          ? Object.fromEntries(currentPlan.studyPlan.entries())
+          : { ...currentPlan.studyPlan }
+        : {};
+
+    // 4. Ensure carried-over tasks are NOT included in the weekly plan
+    const cleanedPlan = {};
+    for (const [day, tasks] of Object.entries(studyPlanRaw)) {
+      cleanedPlan[day] = tasks.filter((task) => !task.carriedOver);
+    }
+
+    // 5. Flatten delayed tasks into a single array
+    const delayedTasks = Object.values(overdueByDay).flat();
+
+    // 6. Send response
     res.status(200).json({
       message: "Study plan fetched successfully",
-      studyPlan: mergedPlan,
+      studyPlan: cleanedPlan,
+      delayedTasks, // separate array for overdue tasks
     });
   } catch (err) {
     console.error("Error fetching plan:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Server error while fetching plan",
-      error: err.message 
+      error: err.message,
     });
   }
 });
