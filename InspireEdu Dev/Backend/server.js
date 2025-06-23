@@ -398,14 +398,16 @@ async function getIncompleteTasks(userId, currentWeek) {
       
       tasks.forEach(task => {
         if (!task.completed) {
-          incompleteTasks[day].push({
-            subject: task.subject,
-            hours: task.hours,
-            details: Array.isArray(task.details) ? [...task.details] : [],
-            completed: false,
-            carriedOver: true,
-            originalWeek: plan.weekNumber,
-          });
+incompleteTasks[day].push({
+  _id: task._id,
+  subject: task.subject,
+  hours: task.hours,
+  details: Array.isArray(task.details) ? [...task.details] : [],
+  completed: task.completed,
+  carriedOver: true,
+  originalWeek: plan.weekNumber,
+});
+
           
         }
       });
@@ -1004,38 +1006,79 @@ app.get("/get-all-scores", async (req, res) => {
   }
 });
 
-// Add this to your server.js (in the routes section)
-app.put('/update-task-status', async (req, res) => {
-  const { userId, weekNumber, day, taskIndex, completed } = req.body;
+app.put("/update-task-status", async (req, res) => {
+  const { userId, weekNumber, day, taskId, completed, isDelayed } = req.body;
 
   try {
-    const plan = await WeeklyStudyPlan.findOne({ userId, weekNumber });
-    if (!plan) {
-      return res.status(404).json({ error: "Plan not found" });
+    const weekNum = parseInt(weekNumber);
+
+    if (isDelayed) {
+      // Search in all previous weeks
+      const previousPlans = await WeeklyStudyPlan.find({
+        userId,
+        weekNumber: { $lt: weekNum },
+      });
+
+      for (const plan of previousPlans) {
+        const studyPlan = plan.studyPlan instanceof Map
+          ? Object.fromEntries(plan.studyPlan.entries())
+          : { ...plan.studyPlan };
+
+        for (const [dayKey, tasks] of Object.entries(studyPlan)) {
+          if (!Array.isArray(tasks)) continue;
+
+          const taskIndex = tasks.findIndex(t => t._id?.toString() === taskId);
+          if (taskIndex !== -1) {
+            tasks[taskIndex].completed = completed;
+
+            if (plan.studyPlan.set) {
+              plan.studyPlan.set(dayKey, tasks); // Map
+            } else {
+              plan.studyPlan[dayKey] = tasks; // Plain object
+            }
+
+            await plan.save();
+            return res.status(200).json({ message: "✅ Delayed task updated successfully" });
+          }
+        }
+      }
+
+      return res.status(404).json({ message: "⚠️ Delayed task not found" });
     }
 
-    // Initialize the day's array if it doesn't exist
-    if (!plan.studyPlan.get(day)) {
-      plan.studyPlan.set(day, []);
+    // === Regular task update (not delayed) ===
+    const currentPlan = await WeeklyStudyPlan.findOne({ userId, weekNumber: weekNum });
+    if (!currentPlan) return res.status(404).json({ message: "Plan not found" });
+
+    const studyPlan = currentPlan.studyPlan instanceof Map
+      ? Object.fromEntries(currentPlan.studyPlan.entries())
+      : { ...currentPlan.studyPlan };
+
+    const tasks = studyPlan[day];
+    if (!Array.isArray(tasks)) return res.status(404).json({ message: "No tasks for this day" });
+
+    const taskIndex = tasks.findIndex(t => t._id?.toString() === taskId);
+    if (taskIndex === -1) return res.status(404).json({ message: "Task not found" });
+
+    tasks[taskIndex].completed = completed;
+
+    if (currentPlan.studyPlan.set) {
+      currentPlan.studyPlan.set(day, tasks);
+    } else {
+      currentPlan.studyPlan[day] = tasks;
     }
 
-    // Ensure the task exists at the given index
-    if (taskIndex >= plan.studyPlan.get(day).length) {
-      return res.status(400).json({ error: "Invalid task index" });
-    }
+    await currentPlan.save();
+    res.status(200).json({ message: "✅ Task updated successfully" });
 
-    // Update the task's completed status
-    const task = plan.studyPlan.get(day)[taskIndex];
-    task.completed = completed;
-    plan.markModified('studyPlan'); // Mark the studyPlan map as modified
-    await plan.save();
-
-    res.status(200).json({ message: "Task status updated successfully" });
-  } catch (error) {
-    console.error("Error updating task status:", error);
-    res.status(500).json({ error: "Failed to update task status" });
+  } catch (err) {
+    console.error("❌ Error in update-task-status:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+
+
 
 
 // 🔹 Start server
