@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f8fc; /* Ensure this matches your container background */
+}
+#root {
+  height: 100%;
+}
+
 .app-container {
     display: flex;
     gap: 5px;
@@ -23,3 +33,4 @@
     box-sizing: border-box;
     overflow: auto; 
 }
+

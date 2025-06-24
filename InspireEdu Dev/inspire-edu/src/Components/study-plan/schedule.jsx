@@ -16,7 +16,7 @@ const Schedule = () => {
   const fetchPlan = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5173/plan?userId=${userId}&weekNumber=${weekNumber}`);
+      const res = await fetch(`http://localhost:5000/plan?userId=${userId}&weekNumber=${weekNumber}`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || "Failed to load study plan");
